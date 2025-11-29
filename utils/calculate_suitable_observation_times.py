@@ -64,6 +64,8 @@ def calculate_suitable_observation_during_time_period(observer_coordinates: GPSC
             object_set_time = observer.next_setting(celestial_object, use_center=True).datetime().replace(tzinfo=datetime.timezone.utc).astimezone()
             if object_set_time > night_end:
                 object_set_time = night_end
+            if object_rise_time >= night_end:
+                return []
             return [(object_rise_time, object_set_time)]
     except (ephem.NeverUpError):
         return []
