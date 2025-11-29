@@ -6,7 +6,7 @@ import datetime
 
 if __name__ == "__main__":
     # Load Messier and Caldwell catalogues
-    messier_catalogue = pd.read_csv('data/astronomical_catalogues/Messier.csv')
+    messier_catalogue = pd.read_csv('data/astronomical_catalogues/Messier_missing.csv')
     caldwell_catalogue = pd.read_csv('data/astronomical_catalogues/Caldwell.csv')
 
     # Example observer location and date
