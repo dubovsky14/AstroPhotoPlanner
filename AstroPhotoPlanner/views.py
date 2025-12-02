@@ -19,7 +19,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)   # automatically log in after registration
-            return redirect('AstroPhotoPlanner/')
+            return redirect('/AstroPhotoPlanner/')
     else:
         form = UserCreationForm()
 

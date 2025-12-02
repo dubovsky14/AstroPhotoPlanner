@@ -1,16 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
 # user profile model to store user preferences
 class UserProfile(models.Model):
-    #user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=40)
-    gps_lat = models.FloatField()
-    gps_lon = models.FloatField()
+    preset_location_id = models.IntegerField(null=True, blank=True)
     astronomical_night_angle_limit = models.FloatField(default=-18.0)  # default to astronomical night
     minimal_target_angle_above_horizon = models.FloatField(default=30.0)
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.name = instance.username
+    instance.profile.save()
 
 class Catalogue(models.Model):
     name = models.CharField(max_length=50)

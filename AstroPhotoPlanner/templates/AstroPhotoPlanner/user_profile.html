@@ -4,8 +4,7 @@
     {% if user_info %}
         <h3>User profile:</h3>
         <p>User name: <b>{{user_info.name}}</b></p>
-        <p>gps_lat: <b>{{user_info.gps_lat}}</b></p>
-        <p>gps_lon: <b>{{user_info.gps_lon}}</b></p>
+        <p>Location: <b>{{user_info.preset_location_id}}</b></p>
         <p>astronomical night angle: <b>{{user_info.astronomical_night_angle_limit}}</b></p>
         <p>minimal target altitude: <b>{{user_info.minimal_target_angle_above_horizon}}</b></p>
     {% else %}
