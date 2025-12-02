@@ -1,3 +1,4 @@
 myenv
 db.*
 ***/__pycache__/
+AstroPhotoPlanner/migrations/

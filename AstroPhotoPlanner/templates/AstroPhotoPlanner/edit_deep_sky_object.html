@@ -1,0 +1,33 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Edit deep sky object - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Edit deep sky object</h1>
+
+    <form id="edit-object-form" method="post" action="/AstroPhotoPlanner/edit_deep_sky_object/{{ deep_sky_object.id }}">
+        {% csrf_token %}
+        <label for="object-name">Object name:</label><br>
+        <input type="text" id="object-name" name="object-name" value="{{ deep_sky_object.name }}"><br><br>
+
+        <label for="ra">Right Ascension (RA):</label><br>
+        <input type="text" id="ra" name="ra" value="{{ deep_sky_object.ra }}"><br><br>
+
+        <label for="dec">Declination (Dec):</label><br>
+        <input type="text" id="dec" name="dec" value="{{ deep_sky_object.dec }}"><br><br>
+
+        <label for="magnitude">Magnitude:</label><br>
+        <input type="number" step="any" id="magnitude" name="magnitude" value="{{ deep_sky_object.magnitude }}"><br><br>
+
+        <label for="object-type">Object Type:</label><br>
+        <input type="text" id="object-type" name="object-type" value="{{ deep_sky_object.object_type }}"><br><br>
+
+        <label for="plan-to-photograph">Plan to photograph:</label><br>
+        <input type="checkbox" id="plan-to-photograph" name="plan-to-photograph" {% if deep_sky_object.plan_to_photograph %}checked{% endif %}><br><br>
+
+        <input type="submit" value="Edit Deep Sky Object">
+    </form>
+
+{% endblock %}

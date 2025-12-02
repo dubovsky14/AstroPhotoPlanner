@@ -3,6 +3,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from AstroPhotoPlanner.models import UserProfile
 
+def get_user_profile(request):
+    return UserProfile.objects.first()  # Replace with actual user profile retrieval logic
+
 def index_page(request):
     return render(request, 'AstroPhotoPlanner/index_page.html')
 
@@ -47,7 +50,7 @@ def add_location(request):
         gps_lon = request.POST.get('longitude')
         description = request.POST.get('description', '')
 
-        user_profile = UserProfile.objects.first()  # Replace with actual user profile retrieval logic
+        user_profile = get_user_profile(request)
         user_profile.locations.create(
             name=name,
             gps_lat=gps_lat,
@@ -61,7 +64,7 @@ def add_location(request):
 def delete_location(request):
     if request.method == "POST":
         location_id = request.POST.get('location_id')
-        user_profile = UserProfile.objects.first()  # Replace with actual user profile retrieval logic
+        user_profile = get_user_profile(request)
         location = user_profile.locations.filter(id=location_id).first()
         default_location = user_profile.preset_location
         if default_location and default_location.id == location.id:
@@ -74,9 +77,121 @@ def delete_location(request):
 def set_location_default(request):
     if request.method == "POST":
         location_id = request.POST.get('location_id')
-        user_profile = UserProfile.objects.first()  # Replace with actual user profile retrieval logic
+        user_profile = get_user_profile(request)
         location = user_profile.locations.filter(id=location_id).first()
         if location:
             user_profile.preset_location = location
             user_profile.save()
     return redirect('/AstroPhotoPlanner/my_locations')
+
+##########################
+## Catalogue Management ##
+##########################
+
+def my_catalogues(request):
+    user_profile = get_user_profile(request)
+    catalogues = user_profile.catalogues.all()
+    return render(request, 'AstroPhotoPlanner/my_catalogues.html', {'catalogues': catalogues, 'user_profile': user_profile})
+
+def add_catalogue(request):
+    if request.method == "POST":
+        name = request.POST.get('catalogue-name')
+
+        user_profile = get_user_profile(request)
+        user_profile.catalogues.create(
+            name=name
+        )
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+    else:
+        return render(request, 'AstroPhotoPlanner/add_catalogue.html')
+
+def delete_catalogue(request):
+    if request.method == "POST":
+        catalogue_id = request.POST.get('catalogue_id')
+        user_profile = get_user_profile(request)
+        catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+        if catalogue:
+            catalogue.delete()
+    return redirect('/AstroPhotoPlanner/my_catalogues')
+
+def manage_catalogue(request, catalogue_id):
+    user_profile = get_user_profile(request)
+    catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+    if not catalogue:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    deep_sky_objects = catalogue.objects.all()
+    return render(request, 'AstroPhotoPlanner/manage_catalogue.html', {'catalogue': catalogue, 'deep_sky_objects': deep_sky_objects})
+
+# to be reviewed
+def add_deep_sky_object(request, catalogue_id):
+    user_profile = get_user_profile(request)
+    catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+    if not catalogue:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    if request.method == "POST":
+        name = request.POST.get('object-name')
+        ra = request.POST.get('ra')
+        dec = request.POST.get('dec')
+        magnitude = request.POST.get('magnitude')
+        object_type = request.POST.get('object-type')
+
+        catalogue.objects.create(
+            name=name,
+            ra=ra,
+            dec=dec,
+            magnitude=magnitude,
+            object_type=object_type
+        )
+        return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
+    else:
+        return render(request, 'AstroPhotoPlanner/add_deep_sky_object.html', {'catalogue': catalogue})
+
+def edit_deep_sky_object(request, deep_sky_object_id):
+    print("DEBUG: edit_deep_sky_object called with ID:", deep_sky_object_id)
+    user_profile = get_user_profile(request)
+    deep_sky_object = None
+    for catalogue in user_profile.catalogues.all():
+        deep_sky_object = catalogue.objects.filter(id=deep_sky_object_id).first()
+        if deep_sky_object:
+            break
+    if not deep_sky_object:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    if request.method == "POST":
+        deep_sky_object.name = request.POST.get('object-name')
+        deep_sky_object.ra = request.POST.get('ra')
+        deep_sky_object.dec = request.POST.get('dec')
+        deep_sky_object.magnitude = request.POST.get('magnitude')
+        deep_sky_object.object_type = request.POST.get('object-type')
+        deep_sky_object.plan_to_photograph = 'plan-to-photograph' in request.POST
+
+        print(  "DEBUG: Editing Deep Sky Object:",
+                deep_sky_object.name,
+                deep_sky_object.ra,
+                deep_sky_object.dec,
+                deep_sky_object.magnitude,
+                deep_sky_object.object_type,
+                deep_sky_object.plan_to_photograph
+        )
+        print("DEBUG: POST data:", request.POST)
+
+        deep_sky_object.save()
+        return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{deep_sky_object.catalogue.id}')
+    else:
+        return render(request, 'AstroPhotoPlanner/edit_deep_sky_object.html', {'catalogue': deep_sky_object.catalogue, 'deep_sky_object': deep_sky_object})
+
+# to be reviewed
+def delete_deep_sky_object(request, catalogue_id):
+    user_profile = get_user_profile(request)
+    catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+    if not catalogue:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    if request.method == "POST":
+        object_id = request.POST.get('object_id')
+        deep_sky_object = catalogue.objects.filter(id=object_id).first()
+        if deep_sky_object:
+            deep_sky_object.delete()
+    return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')

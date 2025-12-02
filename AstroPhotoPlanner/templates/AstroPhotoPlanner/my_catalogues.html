@@ -1,0 +1,41 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} My Catalogues - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>My catalogues</h1>
+
+    <ul>
+
+    <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
+        <tr style="font-weight: bold;">
+            <th>Catalogue Name</th>
+            <th>Number of objects</th>
+            <th>Actions </th>
+        </tr>
+        {% for catalogue in catalogues %}
+        <tr>
+            <td>{{ catalogue.name }}</td>
+            <td>{{ catalogue.objects.count}}</td>
+            <td>
+                <form method="post" action="/AstroPhotoPlanner/delete_catalogue" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="catalogue_id" value="{{ catalogue.id }}">
+                    <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this catalogue?');">
+                </form>
+
+                <form method="get" action="/AstroPhotoPlanner/Manage_catalogue/{{ catalogue.id }}" style="display:inline;">
+                    <input type="submit" value="Manage Catalogue">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </ul>
+
+    <button id="add-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/add_catalogue'">Add New Catalogue</button>
+    </center>
+{% endblock %}

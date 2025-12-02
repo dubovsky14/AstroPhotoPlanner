@@ -1,0 +1,18 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Add catalogue - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Add Catalogue</h1>
+
+    <form id="add-catalogue-form" method="post" action="/AstroPhotoPlanner/add_catalogue">
+        {% csrf_token %}
+        <label for="catalogue-name">Catalogue Name:</label><br>
+        <input type="text" id="catalogue-name" name="catalogue-name"><br><br>
+
+        <input type="submit" value="Add Catalogue">
+    </form>
+
+{% endblock %}

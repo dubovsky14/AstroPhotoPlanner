@@ -1,0 +1,54 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Manage catalogue - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>Managing catalogue: {{ catalogue.name }}</h1>
+
+    <ul>
+
+    <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
+        <tr style="font-weight: bold;">
+            <th>Object Name</th>
+            <th>Right Ascension (RA)</th>
+            <th>Declination (Dec)</th>
+            <th>Magnitude</th>
+            <th>Object Type</th>
+            <th>Plan to photograph</th>
+            <th>Actions</th>
+        </tr>
+        {% for deep_sky_object in deep_sky_objects %}
+        <tr>
+            <td>{{ deep_sky_object.name }}</td>
+            <td>{{ deep_sky_object.ra }}</td>
+            <td>{{ deep_sky_object.dec }}</td>
+            <td>{{ deep_sky_object.magnitude }}</td>
+            <td>{{ deep_sky_object.object_type }}</td>
+            <td>>{{ deep_sky_object.plan_to_photograph }}</td>
+            <td>
+                <form method="post" action="/AstroPhotoPlanner/toggle_plan_object" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="object_id" value="{{ deep_sky_object.id }}">
+                    <input type="submit" value="Toggle Plan">
+                </form>
+                <form method="get" action="/AstroPhotoPlanner/edit_deep_sky_object/{{ deep_sky_object.id }}" style="display:inline;">
+                    <input type="submit" value="Edit">
+                </form>
+
+                <form method="post" action="/AstroPhotoPlanner/delete_object" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="object_id" value="{{ deep_sky_object.id }}">
+                    <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this object?');">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </ul>
+
+    <button id="add-deep-sky-object-btn" onclick="window.location.href='/AstroPhotoPlanner/add_deep_sky_object/{{ catalogue.id }}'">Add new deep sky object</button>
+    </center>
+{% endblock %}
