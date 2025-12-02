@@ -222,3 +222,13 @@ def import_catalogue_from_csv(request, catalogue_id):
             return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv_error.html', {'catalogue': catalogue, 'error': str(e)})
     else:
         return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue})
+
+###########################
+## Planning observations ##
+###########################
+
+def plan_observation(request):
+    user_profile = get_user_profile(request)
+    locations = user_profile.locations.all()
+    catalogues = user_profile.catalogues.all()
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile})

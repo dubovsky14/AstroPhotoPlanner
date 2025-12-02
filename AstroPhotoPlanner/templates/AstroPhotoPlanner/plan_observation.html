@@ -1,0 +1,40 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Plan observation - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>Plan observation</h1>
+
+    <ul>
+
+        <form method="get" action="/AstroPhotoPlanner/observation">
+            <label for="location_select">Select location:</label>
+            <select id="location_select" name="location">
+                {% for location in locations %}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+
+            <label for="catalogue_select">Select catalogue:</label>
+            <select id="catalogue_select" name="catalogue">
+                {% for catalogue in catalogues %}
+                    <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+
+            <label for="observation_date">Select observation date:</label>
+            <input type="date" id="observation_date" name="observation_date">
+            <br><br>
+
+            <input type="submit" value="Plan">
+        </form>
+
+    </ul>
+
+    </center>
+{% endblock %}

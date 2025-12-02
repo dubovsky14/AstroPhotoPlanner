@@ -8,6 +8,11 @@ urlpatterns = [
     path('', views.index_page),
     path('user_profile', views.user_profile),
 
+    # Login, Logout, Register
+    path('login/', auth_views.LoginView.as_view(template_name='AstroPhotoPlanner/login.html'), name='login'),
+    path('logout/', views.logout_page, name='logout'),
+    path('register/', views.register, name='register'),
+
     # Location Management
     path('my_locations', views.my_locations),
     path('add_location', views.add_location),
@@ -25,15 +30,7 @@ urlpatterns = [
     path('toggle_plan_object', views.toggle_plan_object),
     path('import_catalogue_from_csv/<int:catalogue_id>', views.import_catalogue_from_csv),
 
-    # Login
-    #path('login/', auth_views.LoginView.as_view(template_name='AstroPhotoPlanner/login.html', redirect_authenticated_user=True), name='login'),
-    path('login/', auth_views.LoginView.as_view(template_name='AstroPhotoPlanner/login.html'), name='login'),
-
-
-    # Logout
-    path('logout/', views.logout_page, name='logout'),
-
-    # Register
-    path('register/', views.register, name='register'),
+    # Planner
+    path('plan_observation', views.plan_observation),
 
 ]
