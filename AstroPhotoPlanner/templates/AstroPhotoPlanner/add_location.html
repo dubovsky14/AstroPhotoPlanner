@@ -1,0 +1,24 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Add location - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Add location</h1>
+
+    <form id="add-location-form" method="post" action="/AstroPhotoPlanner/add_location">
+        {% csrf_token %}
+        <label for="location-name">Location Name:</label><br>
+        <input type="text" id="location-name" name="location-name"><br><br>
+
+        <label for="latitude">Latitude:</label><br>
+        <input type="number" step="any" id="latitude" name="latitude"><br><br>
+
+        <label for="longitude">Longitude:</label><br>
+        <input type="number" step="any" id="longitude" name="longitude"><br><br>
+
+        <input type="submit" value="Add Location">
+    </form>
+
+{% endblock %}

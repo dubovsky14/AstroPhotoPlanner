@@ -4,7 +4,11 @@
     {% if user_info %}
         <h3>User profile:</h3>
         <p>User name: <b>{{user_info.name}}</b></p>
-        <p>Location: <b>{{user_info.preset_location_id}}</b></p>
+        {% if user_info.preset_location %}
+            <p>Location: <b>{{user_info.preset_location.name}}</b></p>
+        {% else %}
+            <p>Location: <b>not set</b></p>
+        {% endif %}
         <p>astronomical night angle: <b>{{user_info.astronomical_night_angle_limit}}</b></p>
         <p>minimal target altitude: <b>{{user_info.minimal_target_angle_above_horizon}}</b></p>
     {% else %}

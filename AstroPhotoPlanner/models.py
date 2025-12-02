@@ -9,7 +9,7 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=40)
-    preset_location_id = models.IntegerField(null=True, blank=True)
+    preset_location = models.ForeignKey('Location', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     astronomical_night_angle_limit = models.FloatField(default=-18.0)  # default to astronomical night
     minimal_target_angle_above_horizon = models.FloatField(default=30.0)
 
@@ -46,3 +46,6 @@ class Location(models.Model):
     gps_lat = models.FloatField()
     gps_lon = models.FloatField()
     description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.name}, coordinates: {self.gps_lat} °N, {self.gps_lon} °E"

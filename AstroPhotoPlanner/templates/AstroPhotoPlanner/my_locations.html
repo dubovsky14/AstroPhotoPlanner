@@ -1,0 +1,46 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} My Locations - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>My locations</h1>
+
+    <ul>
+
+    <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
+        <tr style="font-weight: bold;">
+            <th>Location Name</th>
+            <th>Latitude (°N)</th>
+            <th>Longitude (°E)</th>
+            <th>Actions </th>
+        </tr>
+        {% for location in users_locations %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.gps_lat }}</td>
+            <td>{{ location.gps_lon }}</td>
+            <td>
+                <form method="post" action="/AstroPhotoPlanner/delete_location" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="location_id" value="{{ location.id }}">
+                    <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this location?');">
+                </form>
+
+                <form method="post" action="/AstroPhotoPlanner/set_location_default" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="location_id" value="{{ location.id }}">
+                    <input type="submit" value="Set as Default">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </ul>
+
+    <button id="add-location-btn" onclick="window.location.href='/AstroPhotoPlanner/add_location'">Add New Location</button>
+
+    </center>
+{% endblock %}
