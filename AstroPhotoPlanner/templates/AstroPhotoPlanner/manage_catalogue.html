@@ -27,7 +27,11 @@
             <td>{{ deep_sky_object.dec }}</td>
             <td>{{ deep_sky_object.magnitude }}</td>
             <td>{{ deep_sky_object.object_type }}</td>
-            <td>>{{ deep_sky_object.plan_to_photograph }}</td>
+            {% if deep_sky_object.plan_to_photograph %}
+                <td><img src="{% static 'AstroPhotoPlanner/images/checkmark_small.png' %}" alt="Yes"></td>
+            {% else %}
+                <td><img src="{% static 'AstroPhotoPlanner/images/cross_small.png' %}" alt="No"></td>
+            {% endif %}
             <td>
                 <form method="post" action="/AstroPhotoPlanner/toggle_plan_object" style="display:inline;">
                     {% csrf_token %}
@@ -50,5 +54,6 @@
     </ul>
 
     <button id="add-deep-sky-object-btn" onclick="window.location.href='/AstroPhotoPlanner/add_deep_sky_object/{{ catalogue.id }}'">Add new deep sky object</button>
+    <button id="import-from-csv" onclick="window.location.href='/AstroPhotoPlanner/import_catalogue_from_csv/{{ catalogue.id }}'">Import from CSV</button>
     </center>
 {% endblock %}

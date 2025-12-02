@@ -1,0 +1,23 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Manage catalogue - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Import catalogue from CSV</h1>
+
+    <center>
+        <form method="post" action="/AstroPhotoPlanner/import_catalogue_from_csv/{{ catalogue.id }}" enctype="multipart/form-data">
+            {% csrf_token %}
+        <div>
+            <label for="csv-file">Choose file to upload</label>
+            <input type="file" id="csv-file" name="csv-file"/>
+        </div>
+        <div>
+            <button>Submit</button>
+        </div>
+        </form>
+
+    </center>
+{% endblock %}

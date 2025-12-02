@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from AstroPhotoPlanner.models import UserProfile
+from AstroPhotoPlanner.modules import import_from_csv
 
 def get_user_profile(request):
     return UserProfile.objects.first()  # Replace with actual user profile retrieval logic
@@ -149,7 +150,6 @@ def add_deep_sky_object(request, catalogue_id):
         return render(request, 'AstroPhotoPlanner/add_deep_sky_object.html', {'catalogue': catalogue})
 
 def edit_deep_sky_object(request, deep_sky_object_id):
-    print("DEBUG: edit_deep_sky_object called with ID:", deep_sky_object_id)
     user_profile = get_user_profile(request)
     deep_sky_object = None
     for catalogue in user_profile.catalogues.all():
@@ -167,15 +167,6 @@ def edit_deep_sky_object(request, deep_sky_object_id):
         deep_sky_object.object_type = request.POST.get('object-type')
         deep_sky_object.plan_to_photograph = 'plan-to-photograph' in request.POST
 
-        print(  "DEBUG: Editing Deep Sky Object:",
-                deep_sky_object.name,
-                deep_sky_object.ra,
-                deep_sky_object.dec,
-                deep_sky_object.magnitude,
-                deep_sky_object.object_type,
-                deep_sky_object.plan_to_photograph
-        )
-        print("DEBUG: POST data:", request.POST)
 
         deep_sky_object.save()
         return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{deep_sky_object.catalogue.id}')
@@ -195,3 +186,39 @@ def delete_deep_sky_object(request, catalogue_id):
         if deep_sky_object:
             deep_sky_object.delete()
     return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
+
+def toggle_plan_object(request):
+    if request.method == "POST":
+        object_id = request.POST.get('object_id')
+        user_profile = get_user_profile(request)
+        deep_sky_object = None
+        for catalogue in user_profile.catalogues.all():
+            deep_sky_object = catalogue.objects.filter(id=object_id).first()
+            if deep_sky_object:
+                break
+        if deep_sky_object:
+            deep_sky_object.plan_to_photograph = not deep_sky_object.plan_to_photograph
+            deep_sky_object.save()
+            return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{deep_sky_object.catalogue.id}')
+    return redirect('/AstroPhotoPlanner/my_catalogues')
+
+def import_catalogue_from_csv(request, catalogue_id):
+    user_profile = get_user_profile(request)
+    catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+    print("Request:", request)
+    print("FILES:", request.FILES)
+    if not catalogue:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    if request.method == "POST":
+        csv_file = request.FILES.get('csv-file')
+        print("type(csv_file): ", type(csv_file))
+        if not csv_file.name.endswith('.csv'):
+            return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'error': 'Please upload a valid CSV file.'})
+        try:
+            import_from_csv.import_catalogue_from_csv(catalogue, csv_file)
+            return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
+        except ValueError as e:
+            return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv_error.html', {'catalogue': catalogue, 'error': str(e)})
+    else:
+        return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue})

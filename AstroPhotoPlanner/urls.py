@@ -22,6 +22,8 @@ urlpatterns = [
     path('add_deep_sky_object/<int:catalogue_id>', views.add_deep_sky_object),
     path('edit_deep_sky_object/<int:deep_sky_object_id>', views.edit_deep_sky_object),
     path('delete_deep_sky_object/<int:catalogue_id>', views.delete_deep_sky_object),
+    path('toggle_plan_object', views.toggle_plan_object),
+    path('import_catalogue_from_csv/<int:catalogue_id>', views.import_catalogue_from_csv),
 
     # Login
     #path('login/', auth_views.LoginView.as_view(template_name='AstroPhotoPlanner/login.html', redirect_authenticated_user=True), name='login'),

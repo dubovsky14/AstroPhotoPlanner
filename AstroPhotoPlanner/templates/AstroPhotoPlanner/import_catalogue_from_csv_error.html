@@ -1,0 +1,12 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Manage catalogue - AstroPhotoPlanner {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>An error occurred while importing the catalogue from CSV</h1>
+        <p>{{ error }}</p>
+    </center>
+{% endblock %}
