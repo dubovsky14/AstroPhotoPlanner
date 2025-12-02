@@ -10,7 +10,8 @@
 
     <ul>
 
-        <form method="get" action="/AstroPhotoPlanner/observation">
+        <form method="post" action="/AstroPhotoPlanner/observation">
+            {% csrf_token %}
             <label for="location_select">Select location:</label>
             <select id="location_select" name="location">
                 {% for location in locations %}
@@ -19,8 +20,8 @@
             </select>
             <br><br>
 
-            <label for="catalogue_select">Select catalogue:</label>
-            <select id="catalogue_select" name="catalogue">
+            <label for="catalogue_id">Select catalogue:</label>
+            <select id="catalogue_id" name="catalogue_id">
                 {% for catalogue in catalogues %}
                     <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
                 {% endfor %}
@@ -28,7 +29,7 @@
             <br><br>
 
             <label for="observation_date">Select observation date:</label>
-            <input type="date" id="observation_date" name="observation_date">
+            <input type="date" id="observation_date" name="observation_date" value="{{ today_date }}">
             <br><br>
 
             <input type="submit" value="Plan">

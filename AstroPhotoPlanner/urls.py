@@ -32,5 +32,6 @@ urlpatterns = [
 
     # Planner
     path('plan_observation', views.plan_observation),
+    path('observation', views.observation),
 
 ]

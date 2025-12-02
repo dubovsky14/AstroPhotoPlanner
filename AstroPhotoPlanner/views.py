@@ -3,6 +3,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from AstroPhotoPlanner.models import UserProfile
 from AstroPhotoPlanner.modules import import_from_csv
+from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
+from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
+from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period
+
+
+import datetime
 
 def get_user_profile(request):
     return UserProfile.objects.first()  # Replace with actual user profile retrieval logic
@@ -231,4 +237,51 @@ def plan_observation(request):
     user_profile = get_user_profile(request)
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
-    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile})
+    today_date = datetime.date.today()
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
+
+def observation(request):
+    if request.method != "POST":
+        return redirect('/AstroPhotoPlanner/plan_observation')
+    user_profile = get_user_profile(request)
+    catalogue = get_user_profile(request).catalogues.filter(id=request.POST.get('catalogue_id')).first()
+    observation_date = request.POST.get('observation_date')
+    location = user_profile.locations.filter(id=request.POST.get('location')).first()
+    gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
+    night_start, night_end = get_astronomical_night_start_end_times(gps_coordinates, observation_date, abs(user_profile.astronomical_night_angle_limit))
+
+    objects_data = []
+    for deep_sky_object in catalogue.objects.filter(plan_to_photograph=True):
+        observation_periods = calculate_suitable_observation_during_time_period(
+            gps_coordinates,
+            night_start,
+            night_end,
+            deep_sky_object.ra,
+            deep_sky_object.dec,
+            user_profile.minimal_target_angle_above_horizon
+        )
+        objects_data.append({
+            'name': deep_sky_object.name,
+            'ra': deep_sky_object.ra,
+            'dec': deep_sky_object.dec,
+            'observation_periods': observation_periods
+        })
+
+    print("Observation planning for date:", observation_date)
+    print("Night start:", night_start)
+    print("Night end:", night_end)
+
+    context = {
+        'user_profile': user_profile,
+        'catalogue': catalogue,
+        'location': location,
+        'observation_date': observation_date,
+        'night_start': night_start,
+        'night_end': night_end,
+        'objects_data': objects_data
+    }
+
+    return render(request, 'AstroPhotoPlanner/observation.html', context)
+
+
+
