@@ -1,14 +1,17 @@
-{% include "AstroPhotoPlanner/header.html" %}
+{% extends "AstroPhotoPlanner/base.html" %}
 
-<h1>Register</h1>
+{% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+    <h1>Register</h1>
 
-<p><a href="{% url 'login' %}">Back to login</a></p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
 
-</body>
-</html>
+    <p><a href="{% url 'login' %}">Back to login</a></p>
+
+{% endblock %}
+
+

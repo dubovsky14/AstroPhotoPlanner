@@ -1,15 +1,12 @@
-{% include "AstroPhotoPlanner/header.html" %}
+{% extends "AstroPhotoPlanner/base.html" %}
 
-        <div class="container mt-4">
-            <h1>Welcome to AstroPhotoPlanner</h1>
+{% block content %}
+    <h1>Welcome to AstroPhotoPlanner</h1>
 
-            {% if user.is_authenticated %}
-                <p>Hello, {{ user.username }}!</p>
-                <p><a href="{% url 'logout' %}">Log out</a></p>
-            {% else %}
-                <p><a href="{% url 'login' %}">Log in</a> | <a href="{% url 'register' %}">Register</a></p>
-            {% endif %}
-        </div>
-
-    </body>
-</html>
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+        <p><a href="{% url 'logout' %}">Log out</a></p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> | <a href="{% url 'register' %}">Register</a></p>
+    {% endif %}
+{% endblock %}
