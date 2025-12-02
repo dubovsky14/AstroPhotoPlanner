@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-z8&6=6yq4oo%y83bwrn#h!1agm=%(6f@2vwd4hda7va4!97(y^
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+LOGIN_REDIRECT_URL = "/AstroPhotoPlanner/"
 
 # Application definition
 
