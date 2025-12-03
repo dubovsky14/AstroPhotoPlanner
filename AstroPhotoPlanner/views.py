@@ -270,6 +270,8 @@ def observation(request):
             else:
                 alternative_text = "Not available this night"
                 alternative_text_color = "orange"
+        else:
+            observation_periods = [(start.strftime("%H:%M:%S"), end.strftime("%H:%M:%S")) for start, end in observation_periods]
 
         objects_data.append({
             'name': deep_sky_object.name,
@@ -281,8 +283,8 @@ def observation(request):
         })
 
     print("Observation planning for date:", observation_date)
-    print("Night start:", night_start)
-    print("Night end:", night_end)
+    #night_start = night_start.strftime("%H:%M:%S  (%Y/%m/%d)")
+    #night_end = night_end.strftime("%H:%M:%S   (%Y/%m/%d)")
 
     context = {
         'user_profile': user_profile,
