@@ -5,7 +5,7 @@ from AstroPhotoPlanner.models import UserProfile
 from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
-from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period
+from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location
 
 
 import datetime
@@ -260,11 +260,24 @@ def observation(request):
             deep_sky_object.dec,
             user_profile.minimal_target_angle_above_horizon
         )
+
+        alternative_text = ""
+        alternative_text_color = "black"
+        if not observation_periods:
+            if not object_available_from_location(location.gps_lat, deep_sky_object.dec, user_profile.minimal_target_angle_above_horizon):
+                alternative_text = "Not available from current location (never)"
+                alternative_text_color = "red"
+            else:
+                alternative_text = "Not available this night"
+                alternative_text_color = "orange"
+
         objects_data.append({
             'name': deep_sky_object.name,
             'ra': deep_sky_object.ra,
             'dec': deep_sky_object.dec,
-            'observation_periods': observation_periods
+            'observation_periods': observation_periods,
+            'alternative_text': alternative_text,
+            'alternative_text_color': alternative_text_color
         })
 
     print("Observation planning for date:", observation_date)

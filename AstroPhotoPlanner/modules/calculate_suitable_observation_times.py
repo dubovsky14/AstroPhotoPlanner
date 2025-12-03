@@ -72,6 +72,12 @@ def calculate_suitable_observation_during_time_period(observer_coordinates: GPSC
     except (ephem.AlwaysUpError):
         return [(night_start, night_end)]
 
+def object_available_from_location(gps_lat : float, object_dec : float, min_angle_above_horizon : float) -> bool:
+    object_max_height = 90.0 - abs(gps_lat - object_dec)
+    if object_max_height < min_angle_above_horizon:
+        return False
+    return True
+
 
 if __name__ == "__main__":
     # Example usage

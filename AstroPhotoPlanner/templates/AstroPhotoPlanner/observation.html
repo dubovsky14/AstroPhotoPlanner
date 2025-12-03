@@ -30,7 +30,7 @@
                         <td>{{ obj.observation_periods.0.0 }}</td>
                         <td>{{ obj.observation_periods.0.1 }}</td>
                     {% else %}
-                        <td colspan="2" style="text-align:center;color:red"><b>Not available this night</b></td>
+                        <td colspan="2" style="text-align:center;color:{{ obj.alternative_text_color }}"><b>{{ obj.alternative_text }} </b></td>
                     {% endif %}
                 </tr>
             {% endfor %}
