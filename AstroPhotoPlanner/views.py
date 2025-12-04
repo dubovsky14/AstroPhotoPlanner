@@ -7,6 +7,7 @@ from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
 from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location
 
+import json
 
 import datetime
 
@@ -40,6 +41,26 @@ def register(request):
 def logout_page(request):
     logout(request)
     return redirect('/AstroPhotoPlanner/')
+
+def change_user_info(request):
+    user_profile = get_user_profile(request)
+    print("Request method:", request.method)
+    print("Request body:", request.body.decode('utf-8'))
+    #request_data = json.loads(request.body.decode('utf-8'))
+    request_data = request.POST
+    if request.method == "POST":
+        key = request_data.get('key_to_change')
+        if key == 'astronomical_night_angle_limit':
+            user_profile.astronomical_night_angle_limit = float(request_data.get('value'))
+        elif key == 'minimal_target_angle_above_horizon':
+            user_profile.minimal_target_angle_above_horizon = float(request_data.get('value'))
+        else:
+            print("Unknown key to change:", key)
+        user_profile.save()
+
+        return redirect('/AstroPhotoPlanner/user_profile')
+    else:
+        return render(request, 'AstroPhotoPlanner/change_user_info.html', {'user_profile': user_profile})
 
 
 #########################

@@ -1,16 +1,43 @@
 {% extends "AstroPhotoPlanner/base.html" %}
 
+{% block title %} User Profile - AstroPhotoPlanner {% endblock %}
+
+
 {% block content %}
+    {% load static %}
+    <script src="{% static 'AstroPhotoPlanner/js/user_info.js' %}"></script>
     {% if user_info %}
-        <h3>User profile:</h3>
-        <p>User name: <b>{{user_info.name}}</b></p>
-        {% if user_info.preset_location %}
-            <p>Location: <b>{{user_info.preset_location.name}}</b></p>
-        {% else %}
-            <p>Location: <b>not set</b></p>
-        {% endif %}
-        <p>astronomical night angle: <b>{{user_info.astronomical_night_angle_limit}}</b></p>
-        <p>minimal target altitude: <b>{{user_info.minimal_target_angle_above_horizon}}</b></p>
+
+        <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
+            <tr style="font-weight: bold;">
+                <th>User name</th>
+                <th> {{ user_info.name }}</th>
+                <th>  </th>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <th>Default location:</th>
+                {% if user_info.preset_location %}
+                    <th> {{ user_info.preset_location.name }}</th>
+                {% else %}
+                    <th> not set </th>
+                {% endif %}
+                <th>  </th>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <th>Astronomical night angle:</th>
+                <th> {{ user_info.astronomical_night_angle_limit }}</th>
+                <th> <button onclick="new_angle = prompt('Set the new angle'); change_user_info('astronomical_night_angle_limit', new_angle, '{{ csrf_token }}')"> Edit </button> </th>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <th>Minimal target altitude:</th>
+                <th> {{ user_info.minimal_target_angle_above_horizon }}</th>
+                <th> <button onclick="new_altitude = prompt('Set the new minimal target altitude'); change_user_info('minimal_target_angle_above_horizon', new_altitude, '{{ csrf_token }}')"> Edit </button> </th>
+            </tr>
+
+        </table>
     {% else %}
         <h3>User not detected</h3>
     {% endif %}

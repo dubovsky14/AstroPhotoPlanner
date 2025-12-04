@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.index_page),
     path('user_profile', views.user_profile),
+    path('change_user_info', views.change_user_info),
 
     # Login, Logout, Register
     path('login/', auth_views.LoginView.as_view(template_name='AstroPhotoPlanner/login.html'), name='login'),
