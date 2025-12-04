@@ -6,13 +6,16 @@ from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
 from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location
+from django.contrib.auth.decorators import login_required
 
 import json
 
 import datetime
 
 def get_user_profile(request):
-    return UserProfile.objects.first()  # Replace with actual user profile retrieval logic
+    if not request.user.is_authenticated:
+        return None
+    return UserProfile.objects.get(user=request.user)
 
 def index_page(request):
     return render(request, 'AstroPhotoPlanner/index_page.html')
@@ -21,9 +24,9 @@ def index_page(request):
 ## User Management ##
 #####################
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def user_profile(request):
-    user_profiles = UserProfile.objects.all()
-    user_info = user_profiles[0] if user_profiles else None
+    user_info = get_user_profile(request)
     return render(request, 'AstroPhotoPlanner/user_profile.html', {'user_info': user_info})
 
 def register(request):
@@ -68,10 +71,14 @@ def change_user_info(request):
 ## Location Management ##
 #########################
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def my_locations(request):
-    users_locations = UserProfile.objects.first().locations.all()
+    user_profile = get_user_profile(request)
+    users_locations = user_profile.locations.all()
     return render(request, 'AstroPhotoPlanner/my_locations.html', {'users_locations': users_locations})
 
+
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def add_location(request):
     if request.method == "POST":
         name = request.POST.get('location-name')
@@ -90,6 +97,7 @@ def add_location(request):
     else:
         return render(request, 'AstroPhotoPlanner/add_location.html')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_location(request):
     if request.method == "POST":
         location_id = request.POST.get('location_id')
@@ -103,6 +111,7 @@ def delete_location(request):
             location.delete()
     return redirect('/AstroPhotoPlanner/my_locations')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def set_location_default(request):
     if request.method == "POST":
         location_id = request.POST.get('location_id')
@@ -117,11 +126,13 @@ def set_location_default(request):
 ## Catalogue Management ##
 ##########################
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def my_catalogues(request):
     user_profile = get_user_profile(request)
     catalogues = user_profile.catalogues.all()
     return render(request, 'AstroPhotoPlanner/my_catalogues.html', {'catalogues': catalogues, 'user_profile': user_profile})
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def add_catalogue(request):
     if request.method == "POST":
         name = request.POST.get('catalogue-name')
@@ -134,6 +145,7 @@ def add_catalogue(request):
     else:
         return render(request, 'AstroPhotoPlanner/add_catalogue.html')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_catalogue(request):
     if request.method == "POST":
         catalogue_id = request.POST.get('catalogue_id')
@@ -143,6 +155,7 @@ def delete_catalogue(request):
             catalogue.delete()
     return redirect('/AstroPhotoPlanner/my_catalogues')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def manage_catalogue(request, catalogue_id):
     user_profile = get_user_profile(request)
     catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
@@ -153,6 +166,7 @@ def manage_catalogue(request, catalogue_id):
     return render(request, 'AstroPhotoPlanner/manage_catalogue.html', {'catalogue': catalogue, 'deep_sky_objects': deep_sky_objects})
 
 # to be reviewed
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def add_deep_sky_object(request, catalogue_id):
     user_profile = get_user_profile(request)
     catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
@@ -177,6 +191,7 @@ def add_deep_sky_object(request, catalogue_id):
     else:
         return render(request, 'AstroPhotoPlanner/add_deep_sky_object.html', {'catalogue': catalogue})
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def edit_deep_sky_object(request, deep_sky_object_id):
     user_profile = get_user_profile(request)
     deep_sky_object = None
@@ -201,7 +216,7 @@ def edit_deep_sky_object(request, deep_sky_object_id):
     else:
         return render(request, 'AstroPhotoPlanner/edit_deep_sky_object.html', {'catalogue': deep_sky_object.catalogue, 'deep_sky_object': deep_sky_object})
 
-# to be reviewed
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_deep_sky_object(request, catalogue_id):
     user_profile = get_user_profile(request)
     catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
@@ -215,6 +230,7 @@ def delete_deep_sky_object(request, catalogue_id):
             deep_sky_object.delete()
     return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def toggle_plan_object(request):
     if request.method == "POST":
         object_id = request.POST.get('object_id')
@@ -230,6 +246,7 @@ def toggle_plan_object(request):
             return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{deep_sky_object.catalogue.id}')
     return redirect('/AstroPhotoPlanner/my_catalogues')
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def import_catalogue_from_csv(request, catalogue_id):
     user_profile = get_user_profile(request)
     catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
@@ -252,6 +269,7 @@ def import_catalogue_from_csv(request, catalogue_id):
 ## Planning observations ##
 ###########################
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def plan_observation(request):
     user_profile = get_user_profile(request)
     locations = user_profile.locations.all()
@@ -259,6 +277,7 @@ def plan_observation(request):
     today_date = datetime.date.today()
     return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def observation(request):
     if request.method != "POST":
         return redirect('/AstroPhotoPlanner/plan_observation')
