@@ -16,5 +16,5 @@ def import_catalogue_from_csv(catalogue, csv_file_path):
             ra=row['ra'],
             dec=row['dec'],
             magnitude=row.get('magnitude', None),
-            object_type=row.get('object_type', ""),
+            object_type=row.get('type', "").strip(),
         )
