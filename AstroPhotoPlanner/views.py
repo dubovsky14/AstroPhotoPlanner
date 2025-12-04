@@ -44,16 +44,17 @@ def logout_page(request):
 
 def change_user_info(request):
     user_profile = get_user_profile(request)
-    print("Request method:", request.method)
-    print("Request body:", request.body.decode('utf-8'))
-    #request_data = json.loads(request.body.decode('utf-8'))
     request_data = request.POST
     if request.method == "POST":
         key = request_data.get('key_to_change')
         if key == 'astronomical_night_angle_limit':
             user_profile.astronomical_night_angle_limit = float(request_data.get('value'))
+            if user_profile.astronomical_night_angle_limit > 0:
+                user_profile.astronomical_night_angle_limit = -user_profile.astronomical_night_angle_limit
         elif key == 'minimal_target_angle_above_horizon':
             user_profile.minimal_target_angle_above_horizon = float(request_data.get('value'))
+            if user_profile.minimal_target_angle_above_horizon < 0:
+                user_profile.minimal_target_angle_above_horizon = -user_profile.minimal_target_angle_above_horizon
         else:
             print("Unknown key to change:", key)
         user_profile.save()
@@ -232,14 +233,11 @@ def toggle_plan_object(request):
 def import_catalogue_from_csv(request, catalogue_id):
     user_profile = get_user_profile(request)
     catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
-    print("Request:", request)
-    print("FILES:", request.FILES)
     if not catalogue:
         return redirect('/AstroPhotoPlanner/my_catalogues')
 
     if request.method == "POST":
         csv_file = request.FILES.get('csv-file')
-        print("type(csv_file): ", type(csv_file))
         if not csv_file.name.endswith('.csv'):
             return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'error': 'Please upload a valid CSV file.'})
         try:
@@ -302,10 +300,6 @@ def observation(request):
             'alternative_text': alternative_text,
             'alternative_text_color': alternative_text_color
         })
-
-    print("Observation planning for date:", observation_date)
-    #night_start = night_start.strftime("%H:%M:%S  (%Y/%m/%d)")
-    #night_end = night_end.strftime("%H:%M:%S   (%Y/%m/%d)")
 
     context = {
         'user_profile': user_profile,
