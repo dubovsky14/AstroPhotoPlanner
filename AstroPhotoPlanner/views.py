@@ -206,7 +206,8 @@ def edit_deep_sky_object(request, deep_sky_object_id):
         deep_sky_object.name = request.POST.get('object-name')
         deep_sky_object.ra = request.POST.get('ra')
         deep_sky_object.dec = request.POST.get('dec')
-        deep_sky_object.magnitude = request.POST.get('magnitude')
+        if request.POST.get('magnitude'):
+            deep_sky_object.magnitude = request.POST.get('magnitude')
         deep_sky_object.object_type = request.POST.get('object-type')
         deep_sky_object.plan_to_photograph = 'plan-to-photograph' in request.POST
 
@@ -315,6 +316,7 @@ def observation(request):
             'name': deep_sky_object.name,
             'ra': deep_sky_object.ra,
             'dec': deep_sky_object.dec,
+            'object_type': deep_sky_object.object_type,
             'observation_periods': observation_periods,
             'alternative_text': alternative_text,
             'alternative_text_color': alternative_text_color

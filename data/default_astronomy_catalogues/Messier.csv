@@ -1,4 +1,4 @@
-index,name,type,RA,dec,mag
+index,name,type,RA,dec,magnitude
 0,M1,    Super­nova remnant ,        5.575,22.0167,8.2
 1,M2,    Globular cluster ,         21.5583,0.8167,6.5
 2,M3,    Globular cluster ,         13.7033,28.3833,6.4
@@ -41,7 +41,7 @@ index,name,type,RA,dec,mag
 39,M40,  Optical Double ,           12.3733,58.0833,9.1
 40,M41,  Open cluster ,             6.7833,-20.7333,4.6
 41,M42,  H II region nebula ,       5.59,-5.45,2.9
-42,M43,  H II region nebula (part of the Orion Nebula),     5.5933,-5.2667,6.9
+42,M43,  H II region nebula ,       5.5933,-5.2667,6.9
 43,M44,  Open cluster ,             8.6683,19.9833,3.1
 44,M45,  Open cluster ,             3.7833,24.1167,1.2
 45,M46,  Open cluster ,             7.6967,-14.8167,6.1
@@ -89,11 +89,11 @@ index,name,type,RA,dec,mag
 87,M88,   Spiral galaxy,            12.5333,14.4167,9.5
 88,M89,   Elliptical galaxy,        12.595,12.55,9.8
 89,M90,   Spiral galaxy,            12.6133,13.1667,9.5
-90,M91,   Barred Spiral galaxy,         12.59,14.5,10.2
+90,M91,   Barred Spiral galaxy,     12.59,14.5,10.2
 91,M92,   Globular cluster,         17.285,43.1333,6.5
 92,M93,   Open cluster,             7.7433,-23.8667,6.2
 93,M94,   Spiral galaxy,            12.8483,41.1167,8.2
-94,M95,   Barred Spiral galaxy,         10.7333,11.7,9.7
+94,M95,   Barred Spiral galaxy,     10.7333,11.7,9.7
 95,M96,   Spiral galaxy,            10.78,11.8167,9.1
 96,M97,   Planetary nebula,         11.2467,55.0167,12
 97,M98,   Spiral galaxy,            12.23,14.9,10.1
