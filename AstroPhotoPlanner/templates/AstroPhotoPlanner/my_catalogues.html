@@ -19,7 +19,7 @@
         {% for catalogue in catalogues %}
         <tr>
             <td>{{ catalogue.name }}</td>
-            <td>{{ catalogue.objects.count}}</td>
+            <td>{{ catalogue.deep_sky_objects.count}}</td>
             <td>
                 <form method="post" action="/AstroPhotoPlanner/delete_catalogue" style="display:inline;">
                     {% csrf_token %}
@@ -37,5 +37,6 @@
     </ul>
 
     <button id="add-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/add_catalogue'">Add New Catalogue</button>
+    <button id="add-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/import_public_catalogue'">Import Public Catalogue</button>
     </center>
 {% endblock %}

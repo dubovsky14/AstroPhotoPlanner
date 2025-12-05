@@ -1,0 +1,23 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Public catalogue import - AstroPhotoPlanner {% endblock %}
+
+
+{% block content %}
+    {% load static %}
+    <script src="{% static 'AstroPhotoPlanner/js/import_public_catalogue.js' %}"></script>
+    <center>
+    <h1>Public catalogue import</h1>
+
+
+    <label for="catalogue_id">Select catalogue:</label>
+    <select id="catalogue_id" name="catalogue_id">
+        {% for catalogue in public_catalogues %}
+            <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <button id="import-catalogue-btn" onclick="import_selected_public_catalogue(document.getElementById('catalogue_id').value, '{{ csrf_token }}')">Import Selected Catalogue</button>
+    </center>
+{% endblock %}

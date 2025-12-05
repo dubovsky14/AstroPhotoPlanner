@@ -1,7 +1,7 @@
 import pandas as pd
 from AstroPhotoPlanner.models import Catalogue, DeepSkyObject
 
-def import_catalogue_from_csv(catalogue, csv_file_path):
+def import_catalogue_from_csv(catalogue : Catalogue, csv_file_path : str) -> None:
     df = pd.read_csv(csv_file_path)
     required_columns = {'name', 'ra', 'dec'}
     df.columns = [col.lower() for col in df.columns]

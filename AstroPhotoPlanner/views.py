@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
-from AstroPhotoPlanner.models import UserProfile
+from AstroPhotoPlanner.models import UserProfile, Catalogue
 from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
@@ -146,6 +146,43 @@ def add_catalogue(request):
         return render(request, 'AstroPhotoPlanner/add_catalogue.html')
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
+def import_public_catalogue(request):
+    user_profile = get_user_profile(request)
+    public_catalogues = Catalogue.objects.filter(owner=None)
+    print( "Public catalogues:", public_catalogues )
+    context = {
+        'user_profile': user_profile,
+        'public_catalogues': public_catalogues
+    }
+    return render(request, 'AstroPhotoPlanner/import_public_catalogue.html', context)
+
+@login_required(login_url='/AstroPhotoPlanner/login/')
+def import_selected_public_catalogue(request):
+    if request.method == "POST":
+        catalogue_id = request.POST.get('catalogue_id')
+        new_catalogue_name = request.POST.get('new_name')
+        user_profile = get_user_profile(request)
+        public_catalogue = Catalogue.objects.filter(id=catalogue_id, owner=None).first()
+        if public_catalogue and new_catalogue_name:
+            # Create a copy of the public catalogue for the user
+            new_catalogue = Catalogue.objects.create(
+                name=new_catalogue_name,
+                owner=user_profile
+            )
+            # Copy deep sky objects
+            for obj in public_catalogue.deep_sky_objects.all():
+                new_catalogue.deep_sky_objects.create(
+                    name=obj.name,
+                    ra=obj.ra,
+                    dec=obj.dec,
+                    magnitude=obj.magnitude,
+                    object_type=obj.object_type,
+                    plan_to_photograph=obj.plan_to_photograph
+                )
+            return redirect('/AstroPhotoPlanner/my_catalogues')
+    return redirect('/AstroPhotoPlanner/import_public_catalogue')
+
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_catalogue(request):
     if request.method == "POST":
         catalogue_id = request.POST.get('catalogue_id')
@@ -162,7 +199,7 @@ def manage_catalogue(request, catalogue_id):
     if not catalogue:
         return redirect('/AstroPhotoPlanner/my_catalogues')
 
-    deep_sky_objects = catalogue.objects.all()
+    deep_sky_objects = catalogue.deep_sky_objects.all()
     return render(request, 'AstroPhotoPlanner/manage_catalogue.html', {'catalogue': catalogue, 'deep_sky_objects': deep_sky_objects})
 
 # to be reviewed
@@ -180,7 +217,7 @@ def add_deep_sky_object(request, catalogue_id):
         magnitude = request.POST.get('magnitude')
         object_type = request.POST.get('object-type')
 
-        catalogue.objects.create(
+        catalogue.deep_skyobjects.create(
             name=name,
             ra=ra,
             dec=dec,
@@ -196,7 +233,7 @@ def edit_deep_sky_object(request, deep_sky_object_id):
     user_profile = get_user_profile(request)
     deep_sky_object = None
     for catalogue in user_profile.catalogues.all():
-        deep_sky_object = catalogue.objects.filter(id=deep_sky_object_id).first()
+        deep_sky_object = catalogue.deep_sky_objects.filter(id=deep_sky_object_id).first()
         if deep_sky_object:
             break
     if not deep_sky_object:
@@ -226,7 +263,7 @@ def delete_deep_sky_object(request, catalogue_id):
 
     if request.method == "POST":
         object_id = request.POST.get('object_id')
-        deep_sky_object = catalogue.objects.filter(id=object_id).first()
+        deep_sky_object = catalogue.deep_sky_objects.filter(id=object_id).first()
         if deep_sky_object:
             deep_sky_object.delete()
     return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
@@ -238,7 +275,7 @@ def toggle_plan_object(request):
         user_profile = get_user_profile(request)
         deep_sky_object = None
         for catalogue in user_profile.catalogues.all():
-            deep_sky_object = catalogue.objects.filter(id=object_id).first()
+            deep_sky_object = catalogue.deep_sky_objects.filter(id=object_id).first()
             if deep_sky_object:
                 break
         if deep_sky_object:
@@ -290,7 +327,7 @@ def observation(request):
     night_start, night_end = get_astronomical_night_start_end_times(gps_coordinates, observation_date, abs(user_profile.astronomical_night_angle_limit))
 
     objects_data = []
-    for deep_sky_object in catalogue.objects.filter(plan_to_photograph=True):
+    for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):
         observation_periods = calculate_suitable_observation_during_time_period(
             gps_coordinates,
             night_start,

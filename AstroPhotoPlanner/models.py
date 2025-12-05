@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 # user profile model to store user preferences
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=40)
     preset_location = models.ForeignKey('Location', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     astronomical_night_angle_limit = models.FloatField(default=-18.0)  # default to astronomical night
@@ -26,13 +26,13 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Catalogue(models.Model):
     name = models.CharField(max_length=50)
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='catalogues')
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True, blank=True, related_name='catalogues')
 
     def __str__(self):
-        return f"{self.name} (Owner: {self.owner.name})"
+        return f"{self.name} (Owner: {self.owner.name if self.owner else 'Public'})"
 
 class DeepSkyObject(models.Model):
-    catalogue = models.ForeignKey(Catalogue, on_delete=models.CASCADE, related_name="objects")
+    catalogue = models.ForeignKey(Catalogue, on_delete=models.CASCADE, related_name="deep_sky_objects")
     name = models.CharField(max_length=100)
     ra = models.FloatField()  # Right Ascension in degrees
     dec = models.FloatField()  # Declination in degrees
