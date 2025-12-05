@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 # user profile model to store user preferences
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=40)
     preset_location = models.ForeignKey('Location', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     astronomical_night_angle_limit = models.FloatField(default=-18.0)  # default to astronomical night

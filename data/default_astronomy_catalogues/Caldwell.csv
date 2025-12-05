@@ -1,0 +1,110 @@
+name,type,ra,dec,magnitude
+C1 ,Open Cluster ,0.74,85.3333,8.1
+C2 Bow Tie Nebula ,Planetary Nebula ,0.2167,72.5333,11.6
+C3 ,,12.2783,69.4667,9.7
+C4 Iris Nebula ,Bright Nebula ,21.03,68.2,6.8
+C5 ,Spiral Galaxy ,3.78,68.1,9.2
+C6 Cat's Eye Nebula ,Planetary Nebula ,17.9767,66.6333,8.8
+C7 ,Spiral Galaxy ,7.615,65.6,8.9
+C8 ,Open Cluster ,1.4917,63.3,9.5
+C9 Cave Nebula ,Bright Nebula ,22.9467,62.6167,7.7
+C10 ,Open Cluster ,1.7667,61.25,7.1
+C11 Bubble nebula ,Bright Nebula ,23.345,61.2,7
+C12 ,Spiral Galaxy ,20.58,60.15,9.7
+C13 Owl or E.T. Cluster ,Open Cluster ,1.3183,58.3333,6.4
+C14 Double Cluster  h & chi Persei ,Open Cluster ,2.3333,57.1333,4.3
+C15 Blinking Planetary ,Planetary Nebula ,19.7467,50.5167,9.8
+C16 ,Open Cluster ,22.255,49.8833,6.4
+C17 ,Elliptical Galaxy ,0.5533,48.5,9.3
+C18 ,Elliptical Galaxy ,0.65,48.3333,9.2
+C19 Cocoon Nebula ,Bright Nebula ,21.8917,47.2667,10
+C20 North America Nebula ,Bright Nebula ,20.98,44.3333,6
+C21 ,Irregular Galaxy ,12.47,44.1,9.4
+C22 Blue Snowball ,Planetary Nebula ,23.4317,42.55,9.2
+C23 ,,2.3767,42.35,9.9
+C24 Perseus A ,Seyfert Galaxy ,3.33,41.5167,11.6
+C25 ,Globular Cluster ,7.635,38.8833,10.4
+C26 ,Spiral Galaxy ,12.2917,37.8167,10.6
+C27 Crescent Nebula ,Bright Nebula ,20.2,38.35,7.5
+C28 ,Open Cluster ,1.9633,37.6833,5.7
+C29 ,,13.1817,37.05,9.8
+C30 ,,22.6183,34.4167,9.5
+C31 Flaming Star Nebula ,Bright Nebula ,5.27,34.2667,6
+C32 Whale Galaxy ,Spiral Galaxy ,12.7017,32.5333,9.3
+C33 East Veil Nebula ,Supernova Remnant ,20.94,31.7167,7
+C34 West Veil Nebula ,Supernova Remnant ,20.7617,30.7167,7
+C35 ,Elliptical Galaxy ,13.0017,27.9833,11.4
+C36 ,Spiral Galaxy ,12.6,27.9667,9.8
+C37 ,Open Cluster ,20.2,26.4833,5.7
+C38 Needle Galaxy ,,12.605,25.9833,9.6
+C39 Eskimo or Clown Nebula ,Planetary Nebula ,7.4867,20.9167,9.9
+C40 ,,11.335,18.35,10.9
+C41 Hyades ,Open Cluster ,4.45,16.0,1
+C42 ,Globular Cluster ,21.025,16.1833,10.6
+C43 ,,0.055,16.15,10.5
+C44 ,,23.0817,12.3167,11
+C45 ,Spiral Galaxy ,13.625,8.8833,10.2
+C46 Hubble's Variable Nebula,Bright Nebula ,6.6533,8.7333,10
+C47 ,Globular Cluster ,20.57,7.4,8.9
+C48 ,Spiral Galaxy ,9.1717,7.0333,10.3
+C49 Rosette Nebula ,Bright Nebula ,6.5383,5.05,9.0
+C50 ,Open Cluster ,6.54,4.8667,4.8
+C51 ,Irregular Galaxy ,1.08,2.1167,9
+C52 ,Elliptical Galaxy ,12.81,-5.8,9.3
+C53 Spindle Galaxy ,Elliptical Galaxy ,10.0867,-7.7167,9.1
+C54 ,Open Cluster ,8.0033,-10.7833,7.6
+C55 Saturn Nebula ,Planetary Nebula ,21.07,-11.3667,8.3
+C56 ,Planetary Nebula ,0.7833,-11.8833,8
+C57 Barnard's Galaxy ,Irregular Galaxy ,19.7483,-14.8,9.3
+C58 ,Open Cluster ,7.2967,-15.6167,7.2
+C59 Ghost of Jupiter ,Planetary Nebula ,10.4133,-18.6333,8.6
+C60 Antennae Galaxies ,Spiral Galaxy ,12.0317,-18.8667,11.3
+C61 Antennae Galaxies ,Spiral Galaxy ,12.0317,-18.8833,13
+C62 ,Spiral Galaxy ,0.785,-20.7667,8.9
+C63 Helix Nebula ,Planetary Nebula ,22.4933,-20.8,6.5
+C64 ,Open Cluster ,7.3133,-24.95,4.1
+C65 Sculptor Galaxy ,Spiral Galaxy ,0.7933,-25.2833,7.1
+C66 ,Globular Cluster ,14.66,-26.5333,10.2
+C67 ,,2.7717,-30.2833,9.2
+C68 ,Bright Nebula ,19.0317,-36.95,9.7
+C69 Bug Nebula ,Planetary Nebula ,17.2283,-37.1,12.8
+C70 ,Spiral Galaxy ,0.915,-37.6833,8.1
+C71 ,Open Cluster ,7.8717,-38.55,5.8
+C72 ,,0.2483,-39.1833,8.2
+C73 ,Globular Cluster ,5.235,-40.05,7.3
+C74 Eight Burst Nebula ,Planetary Nebula ,10.1283,-40.4333,8.2
+C75 ,Open Cluster ,16.4267,-40.6667,5.8
+C76 ,Open Cluster ,16.9,-41.8,2.6
+C77 Centaurus A ,Peculiar Galaxy ,13.425,-43.0167,7
+C78 ,Globular Cluster ,18.1333,-43.7,6.6
+C79 ,Globular Cluster ,10.2933,-46.4167,6.7
+C80 Omega Centauri ,Globular Cluster ,13.4467,-47.4833,3.6
+C81 ,Globular Cluster ,17.425,-48.4167,8.1
+C82 ,Open Cluster ,16.6883,-48.7667,5.2
+C83 ,Spiral Galaxy ,13.09,-49.4667,9.5
+C84 ,Globular Cluster ,13.7733,-51.3667,7.6
+C85 Omicron Vel Cluster ,Open Cluster ,8.67,-53.0667,2.5
+C86 ,Globular Cluster ,17.6783,-53.6667,5.6
+C87 ,Globular Cluster ,3.205,-55.2167,8.4
+C88 ,Open Cluster ,15.095,-55.6,7.9
+C89 S Norma Cluster ,Open Cluster ,16.315,-57.9,5.4
+C90 ,Planetary Nebula ,9.3567,-58.3167,9.7
+C91 ,Open Cluster ,11.1067,-58.6667,3
+C92 Eta Carinae Nebula ,Bright Nebula ,10.73,-59.8667,6.2
+C93 ,Globular Cluster ,19.1817,-59.9833,5.4
+C94 Jewel Box ,Open Cluster ,12.8933,-60.3333,4.2
+C95 ,Open Cluster ,16.0617,-60.5,5.1
+C96 ,Open Cluster ,7.9717,-60.8667,3.8
+C97 ,Open Cluster ,11.6017,-61.6167,5.3
+C98 ,Open Cluster ,12.705,-62.9667,6.9
+C99 Coalsack Nebula ,Dark Nebula ,12.8833,-63.0,10
+C100 Lambda Centauri Nebula ,Open Cluster ,11.61,-63.0333,4.5
+C101 ,,19.1633,-63.85,9
+C102 Theta Car Cluster ,Open Cluster ,10.72,-64.4,1.9
+C103 Tarantula Nebula ,Bright Nebula ,5.645,-69.1,1
+C104 ,Globular Cluster ,1.0533,-70.85,6.6
+C105 ,Globular Cluster ,12.9933,-70.8833,7.3
+C106 47 Tucanae ,Globular Cluster ,0.4017,-72.0833,4
+C107 ,Globular Cluster ,16.43,-72.2,9.3
+C108 ,Globular Cluster ,12.43,-72.6667,7.8
+C109 ,Planetary Nebula ,10.1583,-80.8667,11.6

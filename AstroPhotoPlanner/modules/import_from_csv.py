@@ -10,6 +10,9 @@ def import_catalogue_from_csv(catalogue : Catalogue, csv_file_path : str) -> Non
         raise ValueError(f"CSV file must contain the following columns: {required_columns}")
 
     for _, row in df.iterrows():
+        object_type = row.get('type')
+        if pd.isna(object_type) or type(object_type) != str:
+            row['type'] = ""
         DeepSkyObject.objects.create(
             catalogue=catalogue,
             name=row['name'],

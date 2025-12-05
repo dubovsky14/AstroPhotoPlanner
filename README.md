@@ -12,6 +12,7 @@ pip3 install -r requirements.txt
 python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py load_default_catalogues data/default_astronomy_catalogues/Messier.csv --catalogue_name=Messier-default
+python3 manage.py load_default_catalogues data/default_astronomy_catalogues/Caldwell.csv --catalogue_name=Caldwell-default
 python manage.py runserver
 ```
 
