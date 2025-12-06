@@ -13,25 +13,6 @@ def get_sun_dec_and_ra(observation_time : datetime.datetime) -> tuple[float, flo
 
     return sun_dec, sun_ra
 
-def get_sun_elevation_and_azimuth(observer_coordinates: GPSCoordinate, observation_time : datetime.datetime) -> tuple[float, float]:
-    observer = ephem.Observer()
-    observer.lat = str(observer_coordinates.lat)
-    observer.lon = str(observer_coordinates.lon)
-
-    # Convert observation_time to UTC
-    utc_time = observation_time.astimezone(datetime.timezone.utc)
-
-    observer.date = utc_time
-
-    sun = ephem.Sun(observer)
-
-    sun.compute(observer)
-
-    sun_elevation = sun.alt * (180.0 / ephem.pi)  # Convert from radians to degrees
-    sun_azimuth = sun.az * (180.0 / ephem.pi)  # Convert from radians to degrees
-
-    return sun_elevation, sun_azimuth
-
 def get_astronomical_night_start_end_times(observer_coordinates: GPSCoordinate, date : datetime.date, angle_below_horizon : float) -> tuple[datetime.datetime, datetime.datetime]:
     observer = ephem.Observer()
     observer.lat = str(observer_coordinates.lat)
@@ -64,9 +45,6 @@ if __name__ == "__main__":
 
     sun_dec, sun_ra = get_sun_dec_and_ra(obs_time)
     print(f"Sun Dec: {sun_dec}, Sun RA: {sun_ra}")
-
-    sun_elev, sun_azim = get_sun_elevation_and_azimuth(observer_coordinates, obs_time)
-    print(f"Sun Elevation: {sun_elev}, Sun Azimuth: {sun_azim}")
 
     night_start, night_end = get_astronomical_night_start_end_times(observer_coordinates, obs_time.date(), 18)
     print(f"Astronomical Night Start: {night_start}, Astronomical Night End: {night_end}")
