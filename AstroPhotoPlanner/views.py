@@ -348,7 +348,8 @@ def observation(request):
                 alternative_text = "Not available this night"
                 alternative_text_color = "orange"
         else:
-            observation_time_text = observation_periods[0][0].strftime("%H:%M:%S") + " - " + observation_periods[0][1].strftime("%H:%M:%S")
+            observation_texts = [period[0].strftime("%H:%M:%S") + " - " + period[1].strftime("%H:%M:%S") for period in observation_periods]
+            observation_time_text = " and ".join(observation_texts)
 
         objects_data.append({
             'name': deep_sky_object.name,

@@ -50,12 +50,16 @@ def calculate_suitable_observation_during_time_period(observer_coordinates: GPSC
     above_horizon_at_start = celestial_object.alt*(180.0 / ephem.pi) > min_angle_above_horizon
 
     try:
+        # if the object is above the horizon at the start of the night, it is observable until it sets and then it might rise again before the night ends (need to check both intervals)
         if above_horizon_at_start:
             object_set_time = observer.next_setting(celestial_object, use_center=True).datetime().replace(tzinfo=datetime.timezone.utc).astimezone()
             if object_set_time > night_end:
                 object_set_time = night_end
-            object_rise_time = night_start
-            return [(object_rise_time, object_set_time)]
+            result = [(night_start, object_set_time)]
+            object_rise_time = observer.next_rising(celestial_object, use_center=True).datetime().replace(tzinfo=datetime.timezone.utc).astimezone()
+            if object_rise_time < night_end:
+                result.append((object_rise_time, night_end))
+            return result
         else:
             object_rise_time = observer.next_rising(celestial_object, use_center=True).datetime().replace(tzinfo=datetime.timezone.utc).astimezone()
             if object_rise_time < night_start:
