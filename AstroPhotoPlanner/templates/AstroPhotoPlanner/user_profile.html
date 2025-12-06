@@ -4,18 +4,20 @@
 
 
 {% block content %}
+    <center><h1>My Profile</h1></center>
+
     {% load static %}
     <script src="{% static 'AstroPhotoPlanner/js/user_info.js' %}"></script>
     {% if user_info %}
 
         <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
-            <tr style="font-weight: bold;">
+            <tr style="font-weight: bold;" class="align-middle">
                 <th>User name</th>
                 <th> {{ user_info.name }}</th>
                 <th>  </th>
             </tr>
 
-            <tr style="font-weight: bold;">
+            <tr style="font-weight: bold;" class="align-middle">
                 <th>Default location:</th>
                 {% if user_info.preset_location %}
                     <th> {{ user_info.preset_location.name }}</th>
@@ -25,16 +27,16 @@
                 <th>  </th>
             </tr>
 
-            <tr style="font-weight: bold;">
+            <tr style="font-weight: bold;" class="align-middle">
                 <th>Astronomical night angle:</th>
                 <th> {{ user_info.astronomical_night_angle_limit }}</th>
-                <th> <button onclick="new_angle = prompt('Set the new angle'); change_user_info('astronomical_night_angle_limit', new_angle, '{{ csrf_token }}')"> Edit </button> </th>
+                <th> <button class="btn btn-outline-secondary btn-sm" onclick="new_angle = prompt('Set the new angle'); change_user_info('astronomical_night_angle_limit', new_angle, '{{ csrf_token }}')"> Edit </button> </th>
             </tr>
 
-            <tr style="font-weight: bold;">
+            <tr style="font-weight: bold;" class="align-middle">
                 <th>Minimal target altitude:</th>
                 <th> {{ user_info.minimal_target_angle_above_horizon }}</th>
-                <th> <button onclick="new_altitude = prompt('Set the new minimal target altitude'); change_user_info('minimal_target_angle_above_horizon', new_altitude, '{{ csrf_token }}')"> Edit </button> </th>
+                <th> <button class="btn btn-outline-secondary btn-sm" onclick="new_altitude = prompt('Set the new minimal target altitude'); change_user_info('minimal_target_angle_above_horizon', new_altitude, '{{ csrf_token }}')"> Edit </button> </th>
             </tr>
 
         </table>

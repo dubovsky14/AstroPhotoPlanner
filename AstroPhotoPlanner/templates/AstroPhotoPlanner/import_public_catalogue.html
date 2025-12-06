@@ -18,6 +18,6 @@
     </select>
     <br><br>
 
-    <button id="import-catalogue-btn" onclick="import_selected_public_catalogue(document.getElementById('catalogue_id').value, '{{ csrf_token }}')">Import Selected Catalogue</button>
+    <button class="btn btn-primary" id="import-catalogue-btn" onclick="import_selected_public_catalogue(document.getElementById('catalogue_id').value, '{{ csrf_token }}')">Import Selected Catalogue</button>
     </center>
 {% endblock %}
