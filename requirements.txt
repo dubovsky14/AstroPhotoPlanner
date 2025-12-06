@@ -1,2 +1,10 @@
-django
-ephem
+asgiref==3.9.1
+Django==5.2.6
+ephem==4.2
+numpy==2.3.5
+pandas==2.3.3
+python-dateutil==2.9.0.post0
+pytz==2025.2
+six==1.17.0
+sqlparse==0.5.3
+tzdata==2025.2
