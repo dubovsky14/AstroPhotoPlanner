@@ -339,22 +339,23 @@ def observation(request):
 
         alternative_text = ""
         alternative_text_color = "black"
+        observation_time_text = ""
         if not observation_periods:
             if not object_available_from_location(location.gps_lat, deep_sky_object.dec, user_profile.minimal_target_angle_above_horizon):
-                alternative_text = "Not available from current location (never)"
+                alternative_text = "Never available from selected location"
                 alternative_text_color = "red"
             else:
                 alternative_text = "Not available this night"
                 alternative_text_color = "orange"
         else:
-            observation_periods = [(start.strftime("%H:%M:%S"), end.strftime("%H:%M:%S")) for start, end in observation_periods]
+            observation_time_text = observation_periods[0][0].strftime("%H:%M:%S") + " - " + observation_periods[0][1].strftime("%H:%M:%S")
 
         objects_data.append({
             'name': deep_sky_object.name,
             'ra': deep_sky_object.ra,
             'dec': deep_sky_object.dec,
             'object_type': deep_sky_object.object_type,
-            'observation_periods': observation_periods,
+            'observation_time_text': observation_time_text,
             'alternative_text': alternative_text,
             'alternative_text_color': alternative_text_color
         })

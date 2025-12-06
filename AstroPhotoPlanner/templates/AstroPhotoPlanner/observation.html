@@ -12,15 +12,15 @@
         <p>Location: <b>{{location.name}}</b></p>
         <p>Astronomical night: <b>{{night_start}} - {{night_end}}</b></p>
 
-        <h2>Objects suitable for observation:</h2>
+        <br>
+        <h3>Selected objects from catalogue:</h3>
         <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
             <tr>
                 <th>Object Name</th>
                 <th>RA (hours)</th>
                 <th>Dec (deg)</th>
                 <th>Type</th>
-                <th>Best observation start</th>
-                <th>Best observation end</th>
+                <th>Time for observation</th>
             </tr>
             {% for obj in objects_data %}
                 <tr>
@@ -28,9 +28,8 @@
                     <td>{{ obj.ra }}</td>
                     <td>{{ obj.dec }}</td>
                     <td>{{ obj.object_type }}</td>
-                    {% if obj.observation_periods %}
-                        <td>{{ obj.observation_periods.0.0 }}</td>
-                        <td>{{ obj.observation_periods.0.1 }}</td>
+                    {% if obj.observation_time_text %}
+                        <td>{{ obj.observation_time_text }}</td>
                     {% else %}
                         <td colspan="2" style="text-align:center;color:{{ obj.alternative_text_color }}"><b>{{ obj.alternative_text }} </b></td>
                     {% endif %}
