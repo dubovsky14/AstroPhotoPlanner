@@ -24,3 +24,7 @@ body {
 main {
   flex: 1;
 }
+
+tr {
+  vertical-align: middle;
+}

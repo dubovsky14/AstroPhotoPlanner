@@ -21,22 +21,23 @@
             <td>{{ catalogue.name }}</td>
             <td>{{ catalogue.deep_sky_objects.count}}</td>
             <td>
+                <form method="get" action="/AstroPhotoPlanner/Manage_catalogue/{{ catalogue.id }}" style="display:inline;">
+                    <input type="submit" class="btn btn-secondary btn-sm" value="Manage Catalogue">
+                </form>
+
                 <form method="post" action="/AstroPhotoPlanner/delete_catalogue" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="catalogue_id" value="{{ catalogue.id }}">
-                    <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this catalogue?');">
+                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure you want to delete this catalogue?');">
                 </form>
 
-                <form method="get" action="/AstroPhotoPlanner/Manage_catalogue/{{ catalogue.id }}" style="display:inline;">
-                    <input type="submit" value="Manage Catalogue">
-                </form>
             </td>
         </tr>
         {% endfor %}
     </table>
     </ul>
 
-    <button class="btn btn-primary" id="add-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/add_catalogue'">Add New Catalogue</button>
-    <button class="btn btn-primary" id="add-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/import_public_catalogue'">Import Public Catalogue</button>
+    <button class="btn btn-primary" id="add-catalogue-btn"    onclick="window.location.href='/AstroPhotoPlanner/add_catalogue'">Add New Catalogue</button>
+    <button class="btn btn-primary" id="import-catalogue-btn" onclick="window.location.href='/AstroPhotoPlanner/import_public_catalogue'">Import Public Catalogue</button>
     </center>
 {% endblock %}
