@@ -10,7 +10,12 @@
 
         <p>Observation date: <b>{{observation_date}}</b></p>
         <p>Location: <b>{{location.name}}</b></p>
-        <p>Astronomical night: <b>{{night_start}} - {{night_end}}</b></p>
+
+        {% if night_start and night_end %}
+            <p>Astronomical night: <b>{{night_start}} - {{night_end}}</b></p>
+        {% else %}
+            <p style="color:red;"><b>No astronomical night on this date at this location!</b></p>
+        {% endif %}
 
         <br>
         <h3>Selected objects from catalogue:</h3>

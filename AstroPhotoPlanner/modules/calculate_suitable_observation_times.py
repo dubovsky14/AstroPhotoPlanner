@@ -2,6 +2,7 @@ import ephem
 import datetime
 
 from .common_data_structures import GPSCoordinate
+from .sun_movement import get_astronomical_night_start_end_times
 
 
 def calculate_suitable_observation_times(observer_coordinates: GPSCoordinate, date : datetime.date, object_ra : float, object_dec : float, min_angle_above_horizon : float) -> tuple[datetime.datetime, datetime.datetime]:
@@ -34,6 +35,8 @@ def calculate_suitable_observation_times(observer_coordinates: GPSCoordinate, da
     return morning_time, evening_time
 
 def calculate_suitable_observation_during_time_period(observer_coordinates: GPSCoordinate, night_start : datetime.datetime, night_end : datetime.datetime, object_ra : float, object_dec : float, min_angle_above_horizon : float) -> list[tuple[datetime.datetime, datetime.datetime]]:
+    if night_start is None or night_end is None:
+        return []
     observer = ephem.Observer()
     observer.lat = str(observer_coordinates.lat)
     observer.lon = str(observer_coordinates.lon)
@@ -82,6 +85,35 @@ def object_available_from_location(gps_lat : float, object_dec : float, min_angl
         return False
     return True
 
+def get_total_observation_time(date : datetime.date, observer_coordinates: GPSCoordinate, object_ra : float, object_dec : float, min_angle_above_horizon : float, astronomy_night_angle : float) -> datetime.timedelta:
+    night_start, night_end = get_astronomical_night_start_end_times(observer_coordinates, date, astronomy_night_angle)
+    suitable_periods = calculate_suitable_observation_during_time_period(observer_coordinates, night_start, night_end, object_ra, object_dec, min_angle_above_horizon)
+
+    total_observation_time = datetime.timedelta()
+    for period in suitable_periods:
+        total_observation_time += (period[1] - period[0])
+
+    return total_observation_time
+
+def get_observation_times_throught_year(year : int,
+                                        observer_coordinates: GPSCoordinate,
+                                        object_ra : float,
+                                        object_dec : float,
+                                        min_angle_above_horizon : float,
+                                        astronomy_night_angle : float) -> list[tuple[datetime.date, datetime.timedelta]]:
+    """
+    Get list of tuples [date,observation_time] in a given year.
+    """
+    result = []
+    start_date = datetime.date(year, 1, 1)
+    end_date = datetime.date(year, 12, 31)
+    current_date = start_date
+    while current_date <= end_date:
+        total_observation_time = get_total_observation_time(current_date, observer_coordinates, object_ra, object_dec, min_angle_above_horizon, astronomy_night_angle)
+        result.append((current_date, total_observation_time))
+        current_date += datetime.timedelta(days=1)
+
+    return result
 
 if __name__ == "__main__":
     # Example usage

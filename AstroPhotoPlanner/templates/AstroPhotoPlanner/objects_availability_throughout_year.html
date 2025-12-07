@@ -1,0 +1,70 @@
+{% extends "AstroPhotoPlanner/base.html" %}
+
+{% block title %} Plan observation - AstroPhotoPlanner {% endblock %}
+
+{% block scripts %}
+    {% load static %}
+        <link href="{% static 'AstroPhotoPlanner/css/monthly_summaries.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <center>
+        <h1>Availability of the objects throughout the year</h1>
+
+        <p>Year: <b>{{observation_date.year}}</b></p>
+        <p>Location: <b>{{location.name}}</b></p>
+
+        <br>
+        <h3>Selected objects from catalogue:</h3>
+        <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
+            <tr>
+                <th>Object Name</th>
+                <th>RA (hours)</th>
+                <th>Dec (deg)</th>
+                <th>Type</th>
+                </th></th>
+                <th colspan="12">Time availability</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Jan</th>
+                <th>Feb</th>
+                <th>Mar</th>
+                <th>Apr</th>
+                <th>May</th>
+                <th>Jun</th>
+                <th>Jul</th>
+                <th>Aug</th>
+                <th>Sep</th>
+                <th>Oct</th>
+                <th>Nov</th>
+                <th>Dec</th>
+            </tr>
+            {% for obj in deep_sky_objects_data %}
+                <tr>
+                    <td>{{ obj.name }}</td>
+                    <td>{{ obj.ra }}</td>
+                    <td>{{ obj.dec }}</td>
+                    <td>{{ obj.object_type }}</td>
+                    <td></td>
+                    {% for monthly_data in obj.monthly_summary %}
+                        <td>
+                            <div class="month-box" style="background-color:{{ monthly_data.color }};" title="{{monthly_data.suitable_days_count}} suitable days out of {{monthly_data.total_days_count}} in {{monthly_data.month_name}}. {{monthly_data.on_hover_text}}">
+                                <div class="top-number">{{monthly_data.suitable_days_count}} </div>
+                                <div class="bottom-number">{{monthly_data.total_days_count}}</div>
+                            </div>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+
+    </center>
+{% endblock %}

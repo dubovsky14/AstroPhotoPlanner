@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+
 from AstroPhotoPlanner.models import UserProfile, Catalogue
 from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
-from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location
-from django.contrib.auth.decorators import login_required
+from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location, get_observation_times_throught_year
+from AstroPhotoPlanner.modules.common import get_montly_summaries_of_observation_times
 
 import json
 
@@ -217,7 +219,7 @@ def add_deep_sky_object(request, catalogue_id):
         magnitude = request.POST.get('magnitude')
         object_type = request.POST.get('object-type')
 
-        catalogue.deep_skyobjects.create(
+        catalogue.deep_sky_objects.create(
             name=name,
             ra=ra,
             dec=dec,
@@ -314,6 +316,46 @@ def plan_observation(request):
     catalogues = user_profile.catalogues.all()
     today_date = datetime.date.today()
     return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
+
+@login_required(login_url='/AstroPhotoPlanner/login/')
+def objects_availability_throughout_year(request):
+    if request.method != "POST":
+        return redirect('/AstroPhotoPlanner/plan_observation')
+    user_profile = get_user_profile(request)
+    catalogue = get_user_profile(request).catalogues.filter(id=request.POST.get('catalogue_id')).first()
+    location = user_profile.locations.filter(id=request.POST.get('location')).first()
+    gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
+
+    year = datetime.date.today().year
+
+    deep_sky_objects_data = []
+    for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):
+        dates_and_availability = get_observation_times_throught_year(
+            year,
+            gps_coordinates,
+            deep_sky_object.ra,
+            deep_sky_object.dec,
+            user_profile.minimal_target_angle_above_horizon,
+            abs(user_profile.astronomical_night_angle_limit)
+        )
+        monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(hours=2))
+        deep_sky_objects_data.append({
+            'name': deep_sky_object.name,
+            'ra': deep_sky_object.ra,
+            'dec': deep_sky_object.dec,
+            'object_type': deep_sky_object.object_type,
+            'monthly_summary': monthly_summary
+        })
+
+    context = {
+        'user_profile': user_profile,
+        'catalogue': catalogue,
+        'location': location,
+        'year': year,
+        'deep_sky_objects_data': deep_sky_objects_data
+    }
+
+    return render(request, 'AstroPhotoPlanner/objects_availability_throughout_year.html', context)
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def observation(request):

@@ -23,17 +23,24 @@ def get_astronomical_night_start_end_times(observer_coordinates: GPSCoordinate, 
 
     observer.horizon = f'-{angle_below_horizon}'  # Astronomical twilight
 
-    night_start = observer.next_setting(sun, use_center=True).datetime()
+    try:
+        night_start = observer.next_setting(sun, use_center=True).datetime()
 
-    # calculate dawn for tomorrow
-    observer.date += 1  # Move to the next day
-    night_end = observer.next_rising(sun, use_center=True).datetime()
+        # Around the summer solstice, the sun may set bellow the horizon after midnight and rise again the same day
+        night_end = observer.next_rising(sun, use_center=True).datetime()
+        if night_end < night_start:
+            observer.date += 1  # Move to the next day
+            night_end = observer.next_rising(sun, use_center=True).datetime()
 
-    # Adjust night_end and night_start to local time
-    night_end = night_end.replace(tzinfo=datetime.timezone.utc).astimezone()
-    night_start = night_start.replace(tzinfo=datetime.timezone.utc).astimezone()
+        # Adjust night_end and night_start to local time
+        night_end = night_end.replace(tzinfo=datetime.timezone.utc).astimezone()
+        night_start = night_start.replace(tzinfo=datetime.timezone.utc).astimezone()
 
-    return night_start, night_end
+        return night_start, night_end
+
+    except (ephem.AlwaysUpError, ephem.NeverUpError):
+        # Handle cases where the sun never sets or never rises on the given date and location
+        return None, None
 
 
 if __name__ == "__main__":

@@ -35,6 +35,7 @@ urlpatterns = [
 
     # Planner
     path('plan_observation', views.plan_observation),
+    path('objects_availability_throughout_year', views.objects_availability_throughout_year),
     path('observation', views.observation),
 
 ]
