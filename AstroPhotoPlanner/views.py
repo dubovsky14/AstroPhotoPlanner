@@ -316,7 +316,8 @@ def plan_observation(request):
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
     today_date = datetime.date.today()
-    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date, 'active_page': 'plan_observation'})
+    today_date_str = today_date.strftime("%Y-%m-%d")
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date_str, 'active_page': 'plan_observation'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def check_objects_availability(request):
