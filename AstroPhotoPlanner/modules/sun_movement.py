@@ -29,7 +29,7 @@ def get_astronomical_night_start_end_times(observer_coordinates: GPSCoordinate, 
         # Around the summer solstice, the sun may set bellow the horizon after midnight and rise again the same day
         night_end = observer.next_rising(sun, use_center=True).datetime()
         if night_end < night_start:
-            observer.date += 1  # Move to the next day
+            observer.date  = night_start
             night_end = observer.next_rising(sun, use_center=True).datetime()
 
         # Adjust night_end and night_start to local time
