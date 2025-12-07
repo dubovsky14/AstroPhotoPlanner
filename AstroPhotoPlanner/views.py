@@ -318,6 +318,14 @@ def plan_observation(request):
     return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
+def check_objects_availability(request):
+    user_profile = get_user_profile(request)
+    locations = user_profile.locations.all()
+    catalogues = user_profile.catalogues.all()
+    today_date = datetime.date.today()
+    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
+
+@login_required(login_url='/AstroPhotoPlanner/login/')
 def objects_availability_throughout_year(request):
     if request.method != "POST":
         return redirect('/AstroPhotoPlanner/plan_observation')
@@ -325,6 +333,7 @@ def objects_availability_throughout_year(request):
     catalogue = get_user_profile(request).catalogues.filter(id=request.POST.get('catalogue_id')).first()
     location = user_profile.locations.filter(id=request.POST.get('location')).first()
     gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
+    minimal_observation_time = int(request.POST.get('minimal_observation_time', 120))
 
     year = datetime.date.today().year
 
@@ -338,7 +347,7 @@ def objects_availability_throughout_year(request):
             user_profile.minimal_target_angle_above_horizon,
             abs(user_profile.astronomical_night_angle_limit)
         )
-        monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(hours=2))
+        monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(minutes=minimal_observation_time))
         deep_sky_objects_data.append({
             'name': deep_sky_object.name,
             'ra': deep_sky_object.ra,
@@ -352,6 +361,7 @@ def objects_availability_throughout_year(request):
         'catalogue': catalogue,
         'location': location,
         'year': year,
+        'minimal_observation_time': minimal_observation_time,
         'deep_sky_objects_data': deep_sky_objects_data
     }
 

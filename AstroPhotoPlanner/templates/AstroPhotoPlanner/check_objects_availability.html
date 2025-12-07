@@ -46,10 +46,19 @@
                         <input type="date" id="observation_date" name="observation_date" value="{{ today_date }}">
                     </td>
                 </tr>
+
+                <tr>
+                    <th style="border:none;">
+                        <label for="minimal_observation_time">Set minimal time for observation (minutes):</label>
+                    </th>
+                    <td style="text-align: right; border:none;">
+                        <input type="number" id="minimal_observation_time" name="minimal_observation_time" value="120" min="1">
+                    </td>
+                </tr>
             </table>
             <br><br>
 
-            <input class="btn btn-primary" type="submit" value="Plan">
+            <input class="btn btn-primary" type="submit" value="Check objects availability throughout the year" formaction="/AstroPhotoPlanner/objects_availability_throughout_year">
 
         </form>
 
