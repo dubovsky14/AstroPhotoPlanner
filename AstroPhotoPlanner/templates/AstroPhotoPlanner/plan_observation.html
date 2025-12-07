@@ -12,24 +12,41 @@
 
         <form method="post" action="/AstroPhotoPlanner/observation">
             {% csrf_token %}
-            <label for="location_select">Select location:</label>
-            <select id="location_select" name="location">
-                {% for location in locations %}
-                    <option value="{{ location.id }}">{{ location.name }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
 
-            <label for="catalogue_id">Select catalogue:</label>
-            <select id="catalogue_id" name="catalogue_id">
-                {% for catalogue in catalogues %}
-                    <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
-
-            <label for="observation_date">Select observation date:</label>
-            <input type="date" id="observation_date" name="observation_date" value="{{ today_date }}">
+            <table class='table table-sm2' style="border-collapse: collapse; width:50%;">
+                <tr>
+                    <th style="border:none;">
+                        <label for="location_select">Select location:</label>
+                    </th>
+                    <td style="text-align: right; border:none;">
+                        <select id="location_select" name="location">
+                            {% for location in locations %}
+                                <option value="{{ location.id }}">{{ location.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="border:none;">
+                        <label for="catalogue_id">Select catalogue:</label>
+                    </th>
+                    <td style="text-align: right; border:none;">
+                        <select id="catalogue_id" name="catalogue_id">
+                            {% for catalogue in catalogues %}
+                                <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="border:none;">
+                        <label for="observation_date">Select observation date:</label>
+                    </th>
+                    <td style="text-align: right; border:none;">
+                        <input type="date" id="observation_date" name="observation_date" value="{{ today_date }}">
+                    </td>
+                </tr>
+            </table>
             <br><br>
 
             <input class="btn btn-primary" type="submit" value="Plan">
