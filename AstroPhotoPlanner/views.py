@@ -322,8 +322,8 @@ def check_objects_availability(request):
     user_profile = get_user_profile(request)
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
-    today_date = datetime.date.today()
-    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
+    this_year = datetime.date.today().year
+    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def objects_availability_throughout_year(request):
@@ -335,7 +335,7 @@ def objects_availability_throughout_year(request):
     gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
     minimal_observation_time = int(request.POST.get('minimal_observation_time', 120))
 
-    year = datetime.date.today().year
+    year = int(request.POST.get('observation_year'))
 
     deep_sky_objects_data = []
     for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):

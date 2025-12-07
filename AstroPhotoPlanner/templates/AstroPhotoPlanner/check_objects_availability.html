@@ -41,10 +41,10 @@
                 </tr>
                 <tr>
                     <th style="border:none;">
-                        <label for="observation_date">Select observation date:</label>
+                        <label for="observation_year">Select year:</label>
                     </th>
                     <td style="text-align: right; border:none;">
-                        <input type="date" id="observation_date" name="observation_date" value="{{ today_date }}">
+                        <input type="number" id="observation_year" name="observation_year" value="{{ this_year }}" min="1900" max="2100">
                     </td>
                 </tr>
 
