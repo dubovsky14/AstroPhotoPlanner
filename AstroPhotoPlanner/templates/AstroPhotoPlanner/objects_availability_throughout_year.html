@@ -23,7 +23,7 @@
                 <th>Dec (deg)</th>
                 <th>Type</th>
                 </th></th>
-                <th colspan="12">Time availability</th>
+                <th colspan="13">Time availability</th>
             </tr>
             <tr class="align-middle">
                 <th></th>
@@ -53,10 +53,11 @@
                     <td></td>
                     {% for monthly_data in obj.monthly_summary %}
                         <td>
-                            <div class="month-box" style="background-color:{{ monthly_data.color }};" title="{{monthly_data.suitable_days_count}} suitable days out of {{monthly_data.total_days_count}} in {{monthly_data.month_name}}. {{monthly_data.on_hover_text}}">
-                                <div class="top-number">{{monthly_data.suitable_days_count}} </div>
-                                <div class="bottom-number">{{monthly_data.total_days_count}}</div>
-                            </div>
+                            <center>
+                                <div class="month-box" style="background-color:{{ monthly_data.color }};" title="{{monthly_data.suitable_days_count}} suitable days out of {{monthly_data.total_days_count}} in {{monthly_data.month_name}}. {{monthly_data.on_hover_text}}">
+                                    <div class="days-number">{{monthly_data.suitable_days_count}} </div>
+                                </div>
+                            </center>
                         </td>
                     {% endfor %}
                 </tr>
