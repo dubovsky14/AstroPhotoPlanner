@@ -13,13 +13,11 @@
     <center>
         <h1>Availability of the objects throughout the year</h1>
 
-        <p>Year: <b>{{observation_date.year}}</b></p>
         <p>Location: <b>{{location.name}}</b></p>
 
         <br>
-        <h3>Selected objects from catalogue:</h3>
         <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
-            <tr>
+            <tr class="align-middle">
                 <th>Object Name</th>
                 <th>RA (hours)</th>
                 <th>Dec (deg)</th>
@@ -27,7 +25,7 @@
                 </th></th>
                 <th colspan="12">Time availability</th>
             </tr>
-            <tr>
+            <tr class="align-middle">
                 <th></th>
                 <th></th>
                 <th></th>
@@ -47,7 +45,7 @@
                 <th>Dec</th>
             </tr>
             {% for obj in deep_sky_objects_data %}
-                <tr>
+                <tr class="align-middle">
                     <td>{{ obj.name }}</td>
                     <td>{{ obj.ra }}</td>
                     <td>{{ obj.dec }}</td>
