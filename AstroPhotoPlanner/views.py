@@ -77,7 +77,7 @@ def change_user_info(request):
 def my_locations(request):
     user_profile = get_user_profile(request)
     users_locations = user_profile.locations.all()
-    return render(request, 'AstroPhotoPlanner/my_locations.html', {'users_locations': users_locations})
+    return render(request, 'AstroPhotoPlanner/my_locations.html', {'users_locations': users_locations, 'active_page': 'my_locations'})
 
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
@@ -97,7 +97,7 @@ def add_location(request):
         )
         return redirect('/AstroPhotoPlanner/my_locations')
     else:
-        return render(request, 'AstroPhotoPlanner/add_location.html')
+        return render(request, 'AstroPhotoPlanner/add_location.html', {'active_page': 'my_locations'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_location(request):
@@ -132,7 +132,7 @@ def set_location_default(request):
 def my_catalogues(request):
     user_profile = get_user_profile(request)
     catalogues = user_profile.catalogues.all()
-    return render(request, 'AstroPhotoPlanner/my_catalogues.html', {'catalogues': catalogues, 'user_profile': user_profile})
+    return render(request, 'AstroPhotoPlanner/my_catalogues.html', {'catalogues': catalogues, 'user_profile': user_profile, 'active_page': 'my_catalogues'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def add_catalogue(request):
@@ -145,7 +145,7 @@ def add_catalogue(request):
         )
         return redirect('/AstroPhotoPlanner/my_catalogues')
     else:
-        return render(request, 'AstroPhotoPlanner/add_catalogue.html')
+        return render(request, 'AstroPhotoPlanner/add_catalogue.html' , {'active_page': 'my_catalogues'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def import_public_catalogue(request):
@@ -154,7 +154,8 @@ def import_public_catalogue(request):
     print( "Public catalogues:", public_catalogues )
     context = {
         'user_profile': user_profile,
-        'public_catalogues': public_catalogues
+        'public_catalogues': public_catalogues,
+        'active_page': 'my_catalogues'
     }
     return render(request, 'AstroPhotoPlanner/import_public_catalogue.html', context)
 
@@ -202,7 +203,7 @@ def manage_catalogue(request, catalogue_id):
         return redirect('/AstroPhotoPlanner/my_catalogues')
 
     deep_sky_objects = catalogue.deep_sky_objects.all()
-    return render(request, 'AstroPhotoPlanner/manage_catalogue.html', {'catalogue': catalogue, 'deep_sky_objects': deep_sky_objects})
+    return render(request, 'AstroPhotoPlanner/manage_catalogue.html', {'catalogue': catalogue, 'deep_sky_objects': deep_sky_objects, 'active_page': 'my_catalogues'})
 
 # to be reviewed
 @login_required(login_url='/AstroPhotoPlanner/login/')
@@ -228,7 +229,7 @@ def add_deep_sky_object(request, catalogue_id):
         )
         return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
     else:
-        return render(request, 'AstroPhotoPlanner/add_deep_sky_object.html', {'catalogue': catalogue})
+        return render(request, 'AstroPhotoPlanner/add_deep_sky_object.html', {'catalogue': catalogue, 'active_page': 'my_catalogues'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def edit_deep_sky_object(request, deep_sky_object_id):
@@ -254,7 +255,7 @@ def edit_deep_sky_object(request, deep_sky_object_id):
         deep_sky_object.save()
         return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{deep_sky_object.catalogue.id}')
     else:
-        return render(request, 'AstroPhotoPlanner/edit_deep_sky_object.html', {'catalogue': deep_sky_object.catalogue, 'deep_sky_object': deep_sky_object})
+        return render(request, 'AstroPhotoPlanner/edit_deep_sky_object.html', {'catalogue': deep_sky_object.catalogue, 'deep_sky_object': deep_sky_object, 'active_page': 'my_catalogues'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def delete_deep_sky_object(request, catalogue_id):
@@ -296,14 +297,14 @@ def import_catalogue_from_csv(request, catalogue_id):
     if request.method == "POST":
         csv_file = request.FILES.get('csv-file')
         if not csv_file.name.endswith('.csv'):
-            return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'error': 'Please upload a valid CSV file.'})
+            return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'error': 'Please upload a valid CSV file.', 'active_page': 'my_catalogues'})
         try:
             import_from_csv.import_catalogue_from_csv(catalogue, csv_file)
             return redirect(f'/AstroPhotoPlanner/Manage_catalogue/{catalogue_id}')
         except ValueError as e:
             return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv_error.html', {'catalogue': catalogue, 'error': str(e)})
     else:
-        return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue})
+        return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'active_page': 'my_catalogues'})
 
 ###########################
 ## Planning observations ##
@@ -315,7 +316,7 @@ def plan_observation(request):
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
     today_date = datetime.date.today()
-    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date})
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date, 'active_page': 'plan_observation'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def check_objects_availability(request):
@@ -323,7 +324,7 @@ def check_objects_availability(request):
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
     this_year = datetime.date.today().year
-    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year})
+    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year, 'active_page': 'check_objects_availability'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def objects_availability_throughout_year(request):
@@ -362,7 +363,8 @@ def objects_availability_throughout_year(request):
         'location': location,
         'year': year,
         'minimal_observation_time': minimal_observation_time,
-        'deep_sky_objects_data': deep_sky_objects_data
+        'deep_sky_objects_data': deep_sky_objects_data,
+        'active_page': 'check_objects_availability'
     }
 
     return render(request, 'AstroPhotoPlanner/objects_availability_throughout_year.html', context)
@@ -420,7 +422,8 @@ def observation(request):
         'observation_date': observation_date,
         'night_start': night_start,
         'night_end': night_end,
-        'objects_data': objects_data
+        'objects_data': objects_data,
+        'active_page': 'plan_observation'
     }
 
     return render(request, 'AstroPhotoPlanner/observation.html', context)

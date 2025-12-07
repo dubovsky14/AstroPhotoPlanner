@@ -11,42 +11,41 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link href="{% static 'AstroPhotoPlanner/css/style.css' %}" rel="stylesheet">
 
-
         {% block scripts %}
         {% endblock %}
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/{{APP_NAME}}">AstroPhotoPlanner</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/{{APP_NAME}}/plan_observation" title="Plan observation for a selected night and location">Plan observation</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="/{{APP_NAME}}/check_objects_availability" title="Check availability of objects for observation throughout the year from your location. What is the best season of the year for the observation?">Check objects availability</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="/{{APP_NAME}}/user_profile">My profile</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="/{{APP_NAME}}/my_catalogues">My catalogues</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="/{{APP_NAME}}/my_locations">My locations</a>
-                </li>
-            </ul>
-            <span class="navbar-text">
-                AstroPhotoPlanner by Michal Dubovsky
-            </span>
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/{{APP_NAME}}">AstroPhotoPlanner</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'plan_observation' %}active{% endif %}" aria-current="page" href="/{{APP_NAME}}/plan_observation" title="Plan observation for a selected night and location">Plan observation</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'check_objects_availability' %}active{% endif %}" aria-current="page" href="/{{APP_NAME}}/check_objects_availability" title="Check availability of objects for observation throughout the year from your location. What is the best season of the year for the observation?">Check objects availability</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'user_profile' %}active{% endif %}" href="/{{APP_NAME}}/user_profile">My profile</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'my_catalogues' %}active{% endif %}" href="/{{APP_NAME}}/my_catalogues">My catalogues</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'my_locations' %}active{% endif %}" href="/{{APP_NAME}}/my_locations">My locations</a>
+                    </li>
+                </ul>
+                <span class="navbar-text">
+                    AstroPhotoPlanner by Michal Dubovsky
+                </span>
+                </div>
             </div>
-        </div>
-        </nav>
+            </nav>
 
         <div class="container mb-2 flex-grow-1 mt-4">
             {% block content %}
