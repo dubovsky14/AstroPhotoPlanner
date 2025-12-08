@@ -19,6 +19,14 @@ def get_user_profile(request):
         return None
     return UserProfile.objects.get(user=request.user)
 
+def get_user_default_location_id(user_profile):
+    if user_profile.preset_location:
+        return user_profile.preset_location.id
+    elif user_profile.locations.exists():
+        return user_profile.locations.first().id
+    else:
+        return -1
+
 def index_page(request):
     return render(request, 'AstroPhotoPlanner/index_page.html')
 
@@ -317,7 +325,8 @@ def plan_observation(request):
     catalogues = user_profile.catalogues.all()
     today_date = datetime.date.today()
     today_date_str = today_date.strftime("%Y-%m-%d")
-    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date_str, 'active_page': 'plan_observation'})
+    default_location_id = get_user_default_location_id(user_profile)
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date_str, 'default_location_id': default_location_id, 'active_page': 'plan_observation'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def check_objects_availability(request):
@@ -325,7 +334,8 @@ def check_objects_availability(request):
     locations = user_profile.locations.all()
     catalogues = user_profile.catalogues.all()
     this_year = datetime.date.today().year
-    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year, 'active_page': 'check_objects_availability'})
+    default_location_id = get_user_default_location_id(user_profile)
+    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year, 'default_location_id': default_location_id, 'active_page': 'check_objects_availability'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def objects_availability_throughout_year(request):
@@ -334,6 +344,8 @@ def objects_availability_throughout_year(request):
     user_profile = get_user_profile(request)
     catalogue = get_user_profile(request).catalogues.filter(id=request.POST.get('catalogue_id')).first()
     location = user_profile.locations.filter(id=request.POST.get('location')).first()
+    if not location:
+        return render(request, 'AstroPhotoPlanner/error_page.html', {'error_message': 'Invalid location selected.', 'active_page': 'plan_observation'})
     gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
     minimal_observation_time = int(request.POST.get('minimal_observation_time', 120))
 
@@ -378,6 +390,8 @@ def observation(request):
     catalogue = get_user_profile(request).catalogues.filter(id=request.POST.get('catalogue_id')).first()
     observation_date = request.POST.get('observation_date')
     location = user_profile.locations.filter(id=request.POST.get('location')).first()
+    if not location:
+        return render(request, 'AstroPhotoPlanner/error_page.html', {'error_message': 'Invalid location selected.', 'active_page': 'plan_observation'})
     gps_coordinates = GPSCoordinate(location.gps_lat, location.gps_lon)
     night_start, night_end = get_astronomical_night_start_end_times(gps_coordinates, observation_date, abs(user_profile.astronomical_night_angle_limit))
 
