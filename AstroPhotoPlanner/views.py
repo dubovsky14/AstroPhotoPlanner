@@ -27,6 +27,14 @@ def get_user_default_location_id(user_profile):
     else:
         return -1
 
+def get_user_default_catalogue_id(user_profile):
+    if user_profile.default_catalogue:
+        return user_profile.default_catalogue.id
+    elif user_profile.catalogues.exists():
+        return user_profile.catalogues.first().id
+    else:
+        return -1
+
 def index_page(request):
     return render(request, 'AstroPhotoPlanner/index_page.html')
 
@@ -37,7 +45,9 @@ def index_page(request):
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def user_profile(request):
     user_info = get_user_profile(request)
-    return render(request, 'AstroPhotoPlanner/user_profile.html', {'user_info': user_info})
+    catalogues = user_info.catalogues.all()
+    default_catalogue_id = get_user_default_catalogue_id(user_info)
+    return render(request, 'AstroPhotoPlanner/user_profile.html', {'user_info': user_info, 'catalogues': catalogues, 'default_catalogue_id': default_catalogue_id, 'active_page': 'user_profile'})
 
 def register(request):
     if request.method == "POST":
@@ -49,7 +59,7 @@ def register(request):
     else:
         form = UserCreationForm()
 
-    return render(request, "AstroPhotoPlanner/register.html", {"form": form})
+    return render(request, "AstroPhotoPlanner/register.html", {"form": form, 'active_page': 'user_profile'})
 
 def logout_page(request):
     logout(request)
@@ -58,6 +68,7 @@ def logout_page(request):
 def change_user_info(request):
     user_profile = get_user_profile(request)
     request_data = request.POST
+    print("Request data:", request_data)
     if request.method == "POST":
         key = request_data.get('key_to_change')
         if key == 'astronomical_night_angle_limit':
@@ -68,13 +79,25 @@ def change_user_info(request):
             user_profile.minimal_target_angle_above_horizon = float(request_data.get('value'))
             if user_profile.minimal_target_angle_above_horizon < 0:
                 user_profile.minimal_target_angle_above_horizon = -user_profile.minimal_target_angle_above_horizon
+        elif key == 'default_minimal_observation_duration_minutes':
+            user_profile.default_minimal_observation_duration_minutes = int(request_data.get('value'))
+            if user_profile.default_minimal_observation_duration_minutes < 1:
+                user_profile.default_minimal_observation_duration_minutes = 1
+        elif key == 'default_catalogue':
+            catalogue_id = request_data.get('value', None)
+            if catalogue_id == 'none' or catalogue_id is None:
+                return redirect('/AstroPhotoPlanner/user_profile')
+            catalogue_id = int(catalogue_id)
+            catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+            if catalogue:
+                user_profile.default_catalogue = catalogue
         else:
             print("Unknown key to change:", key)
         user_profile.save()
 
         return redirect('/AstroPhotoPlanner/user_profile')
     else:
-        return render(request, 'AstroPhotoPlanner/change_user_info.html', {'user_profile': user_profile})
+        return render(request, 'AstroPhotoPlanner/change_user_info.html', {'user_profile': user_profile, 'active_page': 'user_profile'})
 
 
 #########################
@@ -326,7 +349,15 @@ def plan_observation(request):
     today_date = datetime.date.today()
     today_date_str = today_date.strftime("%Y-%m-%d")
     default_location_id = get_user_default_location_id(user_profile)
-    return render(request, 'AstroPhotoPlanner/plan_observation.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'today_date': today_date_str, 'default_location_id': default_location_id, 'active_page': 'plan_observation'})
+    default_catalogue_id = get_user_default_catalogue_id(user_profile)
+    return render(request, 'AstroPhotoPlanner/plan_observation.html', {
+        'locations': locations,
+        'catalogues': catalogues,
+        'user_profile': user_profile,
+        'today_date': today_date_str,
+        'default_location_id': default_location_id,
+        'default_catalogue_id': default_catalogue_id,
+        'active_page': 'plan_observation'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def check_objects_availability(request):
@@ -335,7 +366,15 @@ def check_objects_availability(request):
     catalogues = user_profile.catalogues.all()
     this_year = datetime.date.today().year
     default_location_id = get_user_default_location_id(user_profile)
-    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {'locations': locations, 'catalogues': catalogues, 'user_profile': user_profile, 'this_year': this_year, 'default_location_id': default_location_id, 'active_page': 'check_objects_availability'})
+    default_catalogue_id = get_user_default_catalogue_id(user_profile)
+    return render(request, 'AstroPhotoPlanner/check_objects_availability.html', {
+        'locations': locations,
+        'catalogues': catalogues,
+        'user_profile': user_profile,
+        'this_year': this_year,
+        'default_location_id': default_location_id,
+        'default_catalogue_id': default_catalogue_id,
+        'active_page': 'check_objects_availability'})
 
 @login_required(login_url='/AstroPhotoPlanner/login/')
 def objects_availability_throughout_year(request):

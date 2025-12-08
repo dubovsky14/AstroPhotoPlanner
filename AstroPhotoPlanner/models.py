@@ -10,8 +10,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=40)
     preset_location = models.ForeignKey('Location', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    default_catalogue = models.ForeignKey('Catalogue', null=True, blank=True, on_delete=models.SET_NULL, related_name='default_catalogue_for_user')
     astronomical_night_angle_limit = models.FloatField(default=-18.0)  # default to astronomical night
     minimal_target_angle_above_horizon = models.FloatField(default=30.0)
+    default_minimal_observation_duration_minutes = models.IntegerField(default=120)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

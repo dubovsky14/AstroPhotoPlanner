@@ -4,39 +4,64 @@
 
 
 {% block content %}
-    <center><h1>My Profile</h1></center>
+    <center><h1>My Profile</h1>
 
     {% load static %}
     <script src="{% static 'AstroPhotoPlanner/js/user_info.js' %}"></script>
     {% if user_info %}
 
-        <table border="1" class='table table-sm' style="border-collapse: collapse; text-align: center;">
-            <tr style="font-weight: bold;" class="align-middle">
+        <table border="1" class='table table-sm' style="border-collapse: collapse; width:60%;">
+            <tr style="font-weight: bold;">
                 <th>User name:</th>
-                <th> {{ user_info.name }}</th>
+                <th style="text-align: right;"> {{ user_info.name }}</th>
                 <th>  </th>
             </tr>
 
-            <tr style="font-weight: bold;" class="align-middle">
+            <tr style="font-weight: bold;">
                 <th>Default location:</th>
                 {% if user_info.preset_location %}
-                    <th> {{ user_info.preset_location.name }}</th>
+                    <th style="text-align: right;"> {{ user_info.preset_location.name }}</th>
                 {% else %}
-                    <th> not set </th>
+                    <th style="text-align: right;"> not set </th>
                 {% endif %}
                 <th>  </th>
             </tr>
 
-            <tr style="font-weight: bold;" class="align-middle">
+            <tr style="font-weight: bold;">
                 <th>Astronomical night angle:</th>
-                <th> {{ user_info.astronomical_night_angle_limit }}</th>
-                <th> <button  class="btn btn-secondary btn-sm" onclick="new_angle = prompt('Set the new angle'); change_user_info('astronomical_night_angle_limit', new_angle, '{{ csrf_token }}')"> Edit </button> </th>
+                <th style="text-align: right;"> {{ user_info.astronomical_night_angle_limit }}</th>
+                <th style="text-align: right;"> <button  class="btn btn-secondary btn-sm" onclick="new_angle = prompt('Set the new angle'); change_user_info('astronomical_night_angle_limit', new_angle, '{{ csrf_token }}')"> Edit </button> </th>
             </tr>
 
-            <tr style="font-weight: bold;" class="align-middle">
+            <tr style="font-weight: bold;">
                 <th>Minimal target altitude:</th>
-                <th> {{ user_info.minimal_target_angle_above_horizon }}</th>
-                <th> <button  class="btn btn-secondary btn-sm" onclick="new_altitude = prompt('Set the new minimal target altitude'); change_user_info('minimal_target_angle_above_horizon', new_altitude, '{{ csrf_token }}')"> Edit </button> </th>
+                <th style="text-align: right;"> {{ user_info.minimal_target_angle_above_horizon }}</th>
+                <th style="text-align: right;"> <button  class="btn btn-secondary btn-sm" onclick="new_altitude = prompt('Set the new minimal target altitude'); change_user_info('minimal_target_angle_above_horizon', new_altitude, '{{ csrf_token }}')"> Edit </button> </th>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <th>Minimal observation time (minutes):</th>
+                <th style="text-align: right;"> {{ user_info.default_minimal_observation_duration_minutes }}</th>
+                <th style="text-align: right;"> <button  class="btn btn-secondary btn-sm" onclick="new_duration = prompt('Set the new minimal observation time in minutes'); change_user_info('default_minimal_observation_duration_minutes', new_duration, '{{ csrf_token }}')"> Edit </button> </th>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <th>Default catalogue:</th>
+
+                <form method="post" action="/AstroPhotoPlanner/change_user_info">
+                    {% csrf_token %}
+                    <td style="text-align: right; border:none;">
+                        <select id="catalogue_id" name="value"">
+                            {% for catalogue in catalogues %}
+                                <option value="{{ catalogue.id }}" {% if default_catalogue_id == catalogue.id %}selected{% endif %}>{{ catalogue.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <th style="text-align: right;">
+                        <input type="hidden" name="key_to_change" value="default_catalogue">
+                        <input type="submit" class="btn btn-secondary btn-sm" value="Set as default">
+                    </th>
+                </form>
             </tr>
 
         </table>
@@ -44,4 +69,5 @@
         <h3>User not detected</h3>
     {% endif %}
 
+    </center>
 {% endblock %}

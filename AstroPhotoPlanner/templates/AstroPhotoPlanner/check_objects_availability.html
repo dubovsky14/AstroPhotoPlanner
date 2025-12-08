@@ -34,7 +34,7 @@
                     <td style="text-align: right; border:none;">
                         <select id="catalogue_id" name="catalogue_id">
                             {% for catalogue in catalogues %}
-                                <option value="{{ catalogue.id }}">{{ catalogue.name }}</option>
+                                <option value="{{ catalogue.id }}" {% if default_catalogue_id == catalogue.id %}selected{% endif %}>{{ catalogue.name }}</option>
                             {% endfor %}
                         </select>
                     </td>
@@ -53,9 +53,12 @@
                         <label for="minimal_observation_time">Set minimal time for observation (minutes):</label>
                     </th>
                     <td style="text-align: right; border:none;">
-                        <input type="number" id="minimal_observation_time" name="minimal_observation_time" value="120" min="1">
+                        <input type="number" id="minimal_observation_time" name="minimal_observation_time" value="{{ user_profile.default_minimal_observation_duration_minutes }}" min="1">
                     </td>
                 </tr>
+
+
+
             </table>
             <br><br>
 
