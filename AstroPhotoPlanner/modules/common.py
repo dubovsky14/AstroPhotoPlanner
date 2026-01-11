@@ -44,3 +44,26 @@ def get_montly_summaries_of_observation_times(dates_and_observation_times : list
 
     result = [monthly_summaries[month] for month in range(1, 13)]
     return result
+
+def convert_angle_to_float(angle_str: str) -> float:
+    """
+    Convert angle in format "DD°MM'SS" to float degrees.
+    """
+    angle_str = angle_str.replace("°", "h").replace("deg", "h").replace("d", "h")
+    angle_str = angle_str.replace("m", "'").replace("s", '"')
+    parts = angle_str.split("h")
+    degrees = float(parts[0])
+    negative = degrees < 0
+    degrees = abs(degrees)
+    if len(parts) > 1 and parts[1]:
+        minutes_parts = parts[1].split("'")
+        minutes = float(minutes_parts[0])
+        degrees += minutes / 60
+        if len(minutes_parts) > 1 and minutes_parts[1]:
+            seconds_parts = minutes_parts[1].split('"')
+            seconds = float(seconds_parts[0])
+            degrees += seconds / 3600
+    if negative:
+        degrees = -degrees
+    degrees = round(degrees, 4)
+    return degrees

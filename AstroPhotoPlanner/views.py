@@ -8,7 +8,7 @@ from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
 from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location, get_observation_times_throught_year
-from AstroPhotoPlanner.modules.common import get_montly_summaries_of_observation_times
+from AstroPhotoPlanner.modules.common import get_montly_summaries_of_observation_times, convert_angle_to_float
 
 import json
 
@@ -246,9 +246,11 @@ def add_deep_sky_object(request, catalogue_id):
 
     if request.method == "POST":
         name = request.POST.get('object-name')
-        ra = request.POST.get('ra')
-        dec = request.POST.get('dec')
+        ra  = convert_angle_to_float(request.POST.get('ra'))
+        dec = convert_angle_to_float(request.POST.get('dec'))
         magnitude = request.POST.get('magnitude')
+        if magnitude == '':
+            magnitude = None
         object_type = request.POST.get('object-type')
 
         catalogue.deep_sky_objects.create(
@@ -275,8 +277,8 @@ def edit_deep_sky_object(request, deep_sky_object_id):
 
     if request.method == "POST":
         deep_sky_object.name = request.POST.get('object-name')
-        deep_sky_object.ra = request.POST.get('ra')
-        deep_sky_object.dec = request.POST.get('dec')
+        deep_sky_object.ra  = convert_angle_to_float(request.POST.get('ra'))
+        deep_sky_object.dec = convert_angle_to_float(request.POST.get('dec'))
         if request.POST.get('magnitude'):
             deep_sky_object.magnitude = request.POST.get('magnitude')
         deep_sky_object.object_type = request.POST.get('object-type')
