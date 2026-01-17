@@ -34,6 +34,7 @@ def calculate_suitable_observation_times(observer_coordinates: GPSCoordinate, da
 
     return morning_time, evening_time
 
+
 def calculate_suitable_observation_during_time_period(observer_coordinates: GPSCoordinate, night_start : datetime.datetime, night_end : datetime.datetime, object_ra : float, object_dec : float, min_angle_above_horizon : float) -> list[tuple[datetime.datetime, datetime.datetime]]:
     if night_start is None or night_end is None:
         return []
@@ -78,6 +79,23 @@ def calculate_suitable_observation_during_time_period(observer_coordinates: GPSC
         return []
     except (ephem.AlwaysUpError):
         return [(night_start, night_end)]
+
+def get_object_max_height_and_time(observer_coordinates: GPSCoordinate, date : datetime.date, object_ra : float, object_dec : float) -> tuple[float, datetime.datetime]:
+    observer = ephem.Observer()
+    observer.lat = str(observer_coordinates.lat)
+    observer.lon = str(observer_coordinates.lon)
+    observer.date = date
+
+    celestial_object = ephem.FixedBody()
+    celestial_object._ra = str(object_ra)
+    celestial_object._dec = str(object_dec)
+
+    celestial_object.compute(observer)
+
+    transit_time = observer.next_transit(celestial_object).datetime().replace(tzinfo=datetime.timezone.utc).astimezone()
+    max_height = celestial_object.alt * (180.0 / ephem.pi)
+
+    return max_height, transit_time
 
 def object_available_from_location(gps_lat : float, object_dec : float, min_angle_above_horizon : float) -> bool:
     object_max_height = 90.0 - abs(gps_lat - object_dec)

@@ -7,7 +7,7 @@ from AstroPhotoPlanner.models import UserProfile, Catalogue
 from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
-from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location, get_observation_times_throught_year
+from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location, get_observation_times_throught_year, get_object_max_height_and_time
 from AstroPhotoPlanner.modules.common import get_montly_summaries_of_observation_times, convert_angle_to_float
 
 import json
@@ -437,6 +437,9 @@ def observation(request):
     night_start, night_end = get_astronomical_night_start_end_times(gps_coordinates, observation_date, abs(user_profile.astronomical_night_angle_limit))
 
     objects_data = []
+    print("Observation date:", observation_date)
+    print("Night start:", night_start)
+    print("Night end:", night_end)
     for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):
         observation_periods = calculate_suitable_observation_during_time_period(
             gps_coordinates,
@@ -461,6 +464,19 @@ def observation(request):
             observation_texts = [period[0].strftime("%H:%M:%S") + " - " + period[1].strftime("%H:%M:%S") for period in observation_periods]
             observation_time_text = " and ".join(observation_texts)
 
+        # maximum height and transit time
+        max_height, transit_time = get_object_max_height_and_time(
+            gps_coordinates,
+            night_start,
+            deep_sky_object.ra,
+            deep_sky_object.dec
+        )
+        is_highest_during_night = night_start <= transit_time <= night_end
+        print(f"Object: {deep_sky_object.name}, Max height: {max_height}, Transit time: {transit_time}, Is highest during night: {is_highest_during_night}")
+        transit_time = transit_time.strftime("%H:%M:%S")
+        max_height = round(max_height, 1)
+        max_angle_color = "green" if is_highest_during_night else "orange"
+
         objects_data.append({
             'name': deep_sky_object.name,
             'ra': deep_sky_object.ra,
@@ -468,7 +484,10 @@ def observation(request):
             'object_type': deep_sky_object.object_type,
             'observation_time_text': observation_time_text,
             'alternative_text': alternative_text,
-            'alternative_text_color': alternative_text_color
+            'alternative_text_color': alternative_text_color,
+            'max_height': max_height,
+            'transit_time': transit_time,
+            'max_angle_color': max_angle_color
         })
 
     context = {
