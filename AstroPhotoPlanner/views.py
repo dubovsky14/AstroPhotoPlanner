@@ -68,7 +68,6 @@ def logout_page(request):
 def change_user_info(request):
     user_profile = get_user_profile(request)
     request_data = request.POST
-    print("Request data:", request_data)
     if request.method == "POST":
         key = request_data.get('key_to_change')
         if key == 'astronomical_night_angle_limit':
@@ -182,7 +181,6 @@ def add_catalogue(request):
 def import_public_catalogue(request):
     user_profile = get_user_profile(request)
     public_catalogues = Catalogue.objects.filter(owner=None)
-    print( "Public catalogues:", public_catalogues )
     context = {
         'user_profile': user_profile,
         'public_catalogues': public_catalogues,
@@ -339,6 +337,16 @@ def import_catalogue_from_csv(request, catalogue_id):
     else:
         return render(request, 'AstroPhotoPlanner/import_catalogue_from_csv.html', {'catalogue': catalogue, 'active_page': 'my_catalogues'})
 
+@login_required(login_url='/AstroPhotoPlanner/login/')
+def export_catalogue_to_csv(request, catalogue_id):
+    user_profile = get_user_profile(request)
+    catalogue = user_profile.catalogues.filter(id=catalogue_id).first()
+    if not catalogue:
+        return redirect('/AstroPhotoPlanner/my_catalogues')
+
+    csv_content = import_from_csv.export_catalogue_to_csv(catalogue)
+    return render(request, 'AstroPhotoPlanner/export_catalogue_to_csv.html', {'catalogue': catalogue, 'csv_content': csv_content, 'active_page': 'my_catalogues'})
+
 ###########################
 ## Planning observations ##
 ###########################
@@ -437,9 +445,6 @@ def observation(request):
     night_start, night_end = get_astronomical_night_start_end_times(gps_coordinates, observation_date, abs(user_profile.astronomical_night_angle_limit))
 
     objects_data = []
-    print("Observation date:", observation_date)
-    print("Night start:", night_start)
-    print("Night end:", night_end)
     for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):
         observation_periods = calculate_suitable_observation_during_time_period(
             gps_coordinates,
@@ -472,7 +477,6 @@ def observation(request):
             deep_sky_object.dec
         )
         is_highest_during_night = night_start <= transit_time <= night_end
-        print(f"Object: {deep_sky_object.name}, Max height: {max_height}, Transit time: {transit_time}, Is highest during night: {is_highest_during_night}")
         transit_time = transit_time.strftime("%H:%M:%S")
         max_height = round(max_height, 1)
         max_angle_color = "green" if is_highest_during_night else "orange"

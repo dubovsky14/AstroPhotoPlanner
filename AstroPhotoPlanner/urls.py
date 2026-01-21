@@ -31,6 +31,7 @@ urlpatterns = [
     path('delete_deep_sky_object/<int:catalogue_id>', views.delete_deep_sky_object),
     path('toggle_plan_object', views.toggle_plan_object),
     path('import_catalogue_from_csv/<int:catalogue_id>', views.import_catalogue_from_csv),
+    path('export_catalogue_to_csv/<int:catalogue_id>', views.export_catalogue_to_csv),
     path('import_selected_public_catalogue', views.import_selected_public_catalogue),
 
     # Planner
