@@ -8,6 +8,7 @@ from AstroPhotoPlanner.modules import import_from_csv
 from AstroPhotoPlanner.modules.common_data_structures import GPSCoordinate
 from AstroPhotoPlanner.modules.sun_movement import get_astronomical_night_start_end_times
 from AstroPhotoPlanner.modules.calculate_suitable_observation_times import calculate_suitable_observation_during_time_period, object_available_from_location, get_observation_times_throught_year, get_object_max_height_and_time
+from AstroPhotoPlanner.modules.calculate_suitable_observation_times import available_from_given_location_for_sufficient_time, get_peak_times_throught_year
 from AstroPhotoPlanner.modules.common import get_montly_summaries_of_observation_times, convert_angle_to_float
 
 import json
@@ -402,22 +403,39 @@ def objects_availability_throughout_year(request):
 
     deep_sky_objects_data = []
     for deep_sky_object in catalogue.deep_sky_objects.filter(plan_to_photograph=True):
-        dates_and_availability = get_observation_times_throught_year(
-            year,
-            gps_coordinates,
-            deep_sky_object.ra,
-            deep_sky_object.dec,
-            user_profile.minimal_target_angle_above_horizon,
-            abs(user_profile.astronomical_night_angle_limit)
-        )
-        monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(minutes=minimal_observation_time))
-        deep_sky_objects_data.append({
-            'name': deep_sky_object.name,
-            'ra': deep_sky_object.ra,
-            'dec': deep_sky_object.dec,
-            'object_type': deep_sky_object.object_type,
-            'monthly_summary': monthly_summary
-        })
+        if available_from_given_location_for_sufficient_time(gps_coordinates, deep_sky_object.ra, deep_sky_object.dec, user_profile.minimal_target_angle_above_horizon, datetime.timedelta(minutes=minimal_observation_time)):
+            dates_and_availability = get_observation_times_throught_year(
+                year,
+                gps_coordinates,
+                deep_sky_object.ra,
+                deep_sky_object.dec,
+                user_profile.minimal_target_angle_above_horizon,
+                abs(user_profile.astronomical_night_angle_limit)
+            )
+            monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(minutes=minimal_observation_time))
+            deep_sky_objects_data.append({
+                'name': deep_sky_object.name,
+                'ra': deep_sky_object.ra,
+                'dec': deep_sky_object.dec,
+                'object_type': deep_sky_object.object_type,
+                'monthly_summary': monthly_summary
+            })
+        else:
+            dates_and_availability = get_peak_times_throught_year(
+                year,
+                gps_coordinates,
+                deep_sky_object.ra,
+                deep_sky_object.dec,
+                abs(user_profile.astronomical_night_angle_limit)
+            )
+            monthly_summary = get_montly_summaries_of_observation_times(dates_and_availability, datetime.timedelta(minutes=minimal_observation_time), working_with_peak_times=True)
+            deep_sky_objects_data.append({
+                'name': deep_sky_object.name,
+                'ra': deep_sky_object.ra,
+                'dec': deep_sky_object.dec,
+                'object_type': deep_sky_object.object_type,
+                'monthly_summary': monthly_summary
+            })
 
     context = {
         'user_profile': user_profile,

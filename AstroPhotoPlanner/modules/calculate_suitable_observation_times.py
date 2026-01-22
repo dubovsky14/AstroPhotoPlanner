@@ -5,6 +5,32 @@ from .common_data_structures import GPSCoordinate
 from .sun_movement import get_astronomical_night_start_end_times
 
 
+def available_from_given_location_for_sufficient_time(observer_coordinates: GPSCoordinate, object_ra : float, object_dec : float,  min_angle_above_horizon : float, minimal_observation_time : datetime.timedelta) -> bool:
+    """
+    Is the object available from the given location on the given date for at least minimal_observation_time per day?
+    """
+
+    observer = ephem.Observer()
+    observer.lat = str(observer_coordinates.lat)
+    observer.lon = str(observer_coordinates.lon)
+
+    observer.horizon = f'{min_angle_above_horizon}'
+
+    celestial_object = ephem.FixedBody()
+    celestial_object._ra = str(object_ra)
+    celestial_object._dec = str(object_dec)
+
+    try:
+        rise_time = observer.next_rising(celestial_object, use_center=True).datetime()
+        observer.date = rise_time
+        set_time = observer.next_setting(celestial_object, use_center=True).datetime()
+        return (set_time - rise_time) >= minimal_observation_time
+    except (ephem.NeverUpError):
+        return False
+    except (ephem.AlwaysUpError):
+        return True
+
+
 def calculate_suitable_observation_times(observer_coordinates: GPSCoordinate, date : datetime.date, object_ra : float, object_dec : float, min_angle_above_horizon : float) -> tuple[datetime.datetime, datetime.datetime]:
     observer = ephem.Observer()
     observer.lat = str(observer_coordinates.lat)
@@ -97,6 +123,26 @@ def get_object_max_height_and_time(observer_coordinates: GPSCoordinate, date : d
 
     return max_height, transit_time
 
+def get_peak_time_during_astronomical_night(observer_coordinates: GPSCoordinate, date : datetime.date, object_ra : float, object_dec : float, astronomy_night_angle : float) -> bool:
+    night_start, night_end = get_astronomical_night_start_end_times(observer_coordinates, date, astronomy_night_angle)
+
+    # check if there is a night at all
+    if night_start is None or night_end is None:
+        return datetime.timedelta(0)
+
+    # get the time when the object is at its highest point
+    _, transit_time = get_object_max_height_and_time(observer_coordinates, date, object_ra, object_dec)
+
+    # check if the transit time is during the night
+    if not night_start <= transit_time <= night_end:
+        return datetime.timedelta(0)
+
+    sunset_to_transit = transit_time - night_start
+    transit_to_sunrise = night_end - transit_time
+
+    return 2*min(sunset_to_transit, transit_to_sunrise)
+
+
 def object_available_from_location(gps_lat : float, object_dec : float, min_angle_above_horizon : float) -> bool:
     object_max_height = 90.0 - abs(gps_lat - object_dec)
     if object_max_height < min_angle_above_horizon:
@@ -128,6 +174,25 @@ def get_observation_times_throught_year(year : int,
     current_date = start_date
     while current_date <= end_date:
         total_observation_time = get_total_observation_time(current_date, observer_coordinates, object_ra, object_dec, min_angle_above_horizon, astronomy_night_angle)
+        result.append((current_date, total_observation_time))
+        current_date += datetime.timedelta(days=1)
+
+    return result
+
+def get_peak_times_throught_year(   year : int,
+                                    observer_coordinates: GPSCoordinate,
+                                    object_ra : float,
+                                    object_dec : float,
+                                    astronomy_night_angle : float) -> list[tuple[datetime.date, datetime.timedelta]]:
+    """
+    Get list of tuples [date,observation_time] in a given year.
+    """
+    result = []
+    start_date = datetime.date(year, 1, 1)
+    end_date = datetime.date(year, 12, 31)
+    current_date = start_date
+    while current_date <= end_date:
+        total_observation_time = get_peak_time_during_astronomical_night(observer_coordinates, current_date, object_ra, object_dec, astronomy_night_angle)
         result.append((current_date, total_observation_time))
         current_date += datetime.timedelta(days=1)
 
