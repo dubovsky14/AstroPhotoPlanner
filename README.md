@@ -6,21 +6,19 @@ and to calculate which objects will be high enough in the sky during the night a
 ## First time:
 
 ```
-python3 -m venv myenv
-source myenv/bin/activate
-pip3 install -r requirements.txt
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py load_default_catalogues data/default_astronomy_catalogues/Messier.csv --catalogue_name=Messier-default
-python3 manage.py load_default_catalogues data/default_astronomy_catalogues/Caldwell.csv --catalogue_name=Caldwell-default
-python manage.py runserver
+uv init
+uv add -r requirements.txt
+uv run python manage.py makemigrations
+uv run python manage.py migrate
+uv run python manage.py load_default_catalogues data/default_astronomy_catalogues/Messier.csv --catalogue_name=Messier-default
+uv run python manage.py load_default_catalogues data/default_astronomy_catalogues/Caldwell.csv --catalogue_name=Caldwell-default
+uv run python manage.py runserver
 ```
 
 ## Later:
 
 ```
-source myenv/bin/activate
-python manage.py runserver
+uv run python manage.py runserver
 ```
 
 # How to use the tool (in browser)
